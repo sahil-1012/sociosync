@@ -1,9 +1,13 @@
 import React from 'react'
+import Navbar from 'scenes/navbar/Navbar'
 
 const HomePage = () => {
     // const [first, setfirst] = useState(second)
     return (
-        <div>HomePage</div>
+        <>
+            <Navbar />
+            <div>HomePage</div>
+        </>
     )
 }
 
