@@ -60,9 +60,9 @@ const upload = multer({ storage });
 
 
 
-app.use("/", (req, res) => {
-    res.send("Welcome to sociopedia Server");
-});
+// app.use("/", (req, res) => {
+//     res.send("Welcome to sociopedia Server");
+// });
 
 app.use("/auth", authRoutes)
 app.use("/users", userRoutes)
