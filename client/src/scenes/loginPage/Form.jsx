@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { EditOutlined } from '@mui/icons-material'
 import { setLogin } from 'state'
 
-const PORT = process.env.REACT_HOST_PORT
+const PORT = process.env.REACT_APP_HOST
 
 // ***** YUP VALIDATION SCHEMA
 const registerSchema = yup.object().shape({
@@ -67,7 +67,7 @@ const Form = () => {
         console.log(loggedInResponse)
         const loggedIn = await loggedInResponse.json();
 
-        if (loggedIn) {
+        if (loggedIn.status === 200) {
             onSubmitProps.resetForm();
             dispatch(
                 setLogin({
