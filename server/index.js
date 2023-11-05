@@ -62,12 +62,12 @@ const upload = multer({ storage });
 
 app.use("/", (req, res) => {
     res.send("Welcome to sociopedia Server");
-  });
+});
 
 app.use("/auth", authRoutes)
 app.use("/users", userRoutes)
 
-    /* // ~ ROUTES WITH FILES */
-    app.post("/auth/register", upload.single('picture'), register)
-    app.post("/posts", verifyToken, upload.single('picture'), createPost)
+/* // ~ ROUTES WITH FILES */
+app.post("/auth/register", upload.single('picture'), register)
+app.post("/posts", verifyToken, upload.single('picture'), createPost)
 app.use("/posts", postRoutes)
