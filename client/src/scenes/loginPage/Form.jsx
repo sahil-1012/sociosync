@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { EditOutlined } from '@mui/icons-material'
 import { setLogin } from 'state'
 
-const PORT = process.env.REACT_APP_HOST
+const PORT = process.env.REACT_APP_HOST;
 
 // ***** YUP VALIDATION SCHEMA
 const registerSchema = yup.object().shape({
@@ -55,7 +55,6 @@ const Form = () => {
     const isRegister = pageType === "register"
 
     const login = async (values, onSubmitProps) => {
-        console.log(PORT)
         const loggedInResponse = await fetch(
             `${PORT}/auth/login`,
             {
@@ -64,10 +63,8 @@ const Form = () => {
                 body: JSON.stringify(values),
             }
         );
-        console.log(loggedInResponse)
         const loggedIn = await loggedInResponse.json();
-
-        if (loggedIn.status === 200) {
+        if (loggedIn.success) {
             onSubmitProps.resetForm();
             dispatch(
                 setLogin({
@@ -81,7 +78,7 @@ const Form = () => {
 
     const register = async (values, onSubmitProps) => {
         const formData = new FormData();
-        
+
         for (let key in values) {
             // Handle the 'picture' field separately
             if (key === 'picture') {
@@ -91,8 +88,7 @@ const Form = () => {
         }
 
         // FORMDATA CAN'T BE TREATED AS NORMAL OBJECT
-        console.log(...formData);
-        console.log(`${PORT}/auth/register`)
+        // console.log(...formData);
         try {
             const savedUserResponse = await fetch(
                 `${PORT}/auth/register`,
@@ -102,16 +98,12 @@ const Form = () => {
                 }
             );
 
-            if (savedUserResponse.ok) {
-                const savedUser = await savedUserResponse.json();
-
-                if (savedUser.status === 200) {
-                    setPageType('login');
-                    onSubmitProps.resetForm();
-                }
+            const savedUser = await savedUserResponse.json();
+            if (savedUser.success) {
+                setPageType('login');
+                onSubmitProps.resetForm();
             } else {
-                // Handle HTTP error, e.g., non-200 response
-                // You can check savedUserResponse.status and handle the error accordingly
+                // ****** ~ Server error popup
             }
         } catch (error) {
             console.error('Error:', error);
@@ -120,7 +112,6 @@ const Form = () => {
     }
 
     const handleFormSubmit = async (values, onSubmitProps) => {
-        console.log(isRegister)
 
         if (isLogin) {
             await login(values, onSubmitProps)
