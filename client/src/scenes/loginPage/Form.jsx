@@ -89,6 +89,8 @@ const Form = () => {
             }
             formData.append(key, values[key]);
         }
+
+        // FORMDATA CAN'T BE TREATED AS NORMAL OBJECT
         // console.log(...formData);
         try {
             const savedUserResponse = await fetch(
