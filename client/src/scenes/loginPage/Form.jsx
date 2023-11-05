@@ -43,7 +43,7 @@ const initialValuesLogin = {
 
 
 const Form = () => {
-    const [pageType, setPageType] = useState("register")
+    const [pageType, setPageType] = useState("login")
     const { palette } = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -55,16 +55,18 @@ const Form = () => {
 
     const login = async (values, onSubmitProps) => {
         const loggedInResponse = await fetch(
-            'https://localhost:3001/auth/login',
+            'http://localhost:3001/auth/login',
             {
-                method: 'POST',
+                method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(values),
             }
         );
+        console.log(loggedInResponse)
         const loggedIn = await loggedInResponse.json();
-        onSubmitProps.resetForm();
+
         if (loggedIn) {
+            onSubmitProps.resetForm();
             dispatch(
                 setLogin({
                     user: loggedIn.user,
@@ -76,36 +78,61 @@ const Form = () => {
     }
 
     const register = async (values, onSubmitProps) => {
-        const formData = new FormData(values, onSubmitProps)
-        for (let value in values) {
-            formData.append(value, values[value])
-        }
-        formData.append('picturePath', values.picture.name)
+        const formData = new FormData();
+        console.log(formData);
 
-        const savedUserResponse = await fetch(
-            'https://localhost:3001/auth/register',
-            {
-                method: 'POST',
-                body: formData,
+        for (let key in values) {
+            // Handle the 'picture' field separately
+            if (key === 'picture') {
+                formData.append('picturePath', values[key].name);
+                // formData.append(key, values[key]);
+            } else {
+                console.log(key, values[key]);
+                formData.append(key, values[key]);
             }
-        );
-        const savedUser = await savedUserResponse.json();
-        onSubmitProps.resetForm();
-
-        if (savedUser) {
-            setPageType('login');
-
         }
+        
+        console.log(formData);
+
+        try {
+            const savedUserResponse = await fetch(
+                'http://localhost:3001/auth/register',
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            );
+
+            if (savedUserResponse.ok) {
+                const savedUser = await savedUserResponse.json();
+
+                if (savedUser.status === 200) {
+                    setPageType('login');
+                    onSubmitProps.resetForm();
+                }
+            } else {
+                // Handle HTTP error, e.g., non-200 response
+                // You can check savedUserResponse.status and handle the error accordingly
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+
     }
 
     const handleFormSubmit = async (values, onSubmitProps) => {
+        console.log(isRegister)
+
         if (isLogin) {
             await login(values, onSubmitProps)
         }
-        if (isRegister) {
+        else if (isRegister) {
             await register(values, onSubmitProps)
         }
     };
+
+
+
     return (
         <Formik onSubmit={handleFormSubmit}
             initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
@@ -125,6 +152,7 @@ const Form = () => {
                         {isRegister && (
                             <>
                                 <TextField label='First Name'
+                                    name='firstName'
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     value={values.firstName}
@@ -133,6 +161,7 @@ const Form = () => {
                                     sx={{ gridColumn: 'span 2' }}
                                 />
                                 <TextField label='Last Name'
+                                    name='lastName'
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     value={values.lastName}
@@ -141,6 +170,7 @@ const Form = () => {
                                     sx={{ gridColumn: 'span 2' }}
                                 />
                                 <TextField label='Location'
+                                    name='location'
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     value={values.location}
@@ -149,6 +179,7 @@ const Form = () => {
                                     sx={{ gridColumn: 'span 4' }}
                                 />
                                 <TextField label='Occupation'
+                                    name='occupation'
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     value={values.occupation}
@@ -167,23 +198,27 @@ const Form = () => {
                                         multiple={false}
                                         onDrop={(acceptedFiles) =>
                                             setFieldValue('picture', acceptedFiles[0])}
-                                    >{({ getRootsProps, getInputProps }) => (
-                                        <Box
-                                            {...getRootsProps}
-                                            border={`2px dashed ${palette.primary.main}`}
-                                            p='1rem'
-                                        >
-                                            <input {...getInputProps()} />
-                                            {!values.picture ? (
-                                                <p>Add Picture Here</p>
-                                            ) : (
-                                                <FlexBetween>
-                                                    <Typography>{values.picture.name}</Typography>
-                                                    <EditOutlined />
-                                                </FlexBetween>
-                                            )}
-                                        </Box>
-                                    )}
+                                    >
+                                        {({ getRootProps, getInputProps }) => (
+                                            <Box
+                                                {...getRootProps()}
+                                                border={`2px dashed ${palette.primary.main}`}
+                                                p='1rem'
+                                                sx={{
+                                                    '&:hover': { cursor: 'pointer' }
+                                                }}
+                                            >
+                                                <input {...getInputProps()} />
+                                                {!values.picture ? (
+                                                    <p>Add Picture Here</p>
+                                                ) : (
+                                                    <FlexBetween>
+                                                        <Typography>{values.picture.name}</Typography>
+                                                        <EditOutlined />
+                                                    </FlexBetween>
+                                                )}
+                                            </Box>
+                                        )}
                                     </Dropzone>
                                 </Box>
                             </>
@@ -226,9 +261,10 @@ const Form = () => {
                         >
                             {isLogin ? 'LOGIN' : 'REGISTER'}
                         </Button>
+
                         <Typography
-                            onclick={() => {
-                                setPageType(isLogin ? 'Register' : 'Login')
+                            onClick={() => {
+                                setPageType(isLogin ? 'register' : 'login')
                                 resetForm()
                             }}
                             sx={{

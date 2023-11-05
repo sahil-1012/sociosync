@@ -5,11 +5,15 @@ import User from "../models/users.js"
 
 export const register = async (req, res) => {
     try {
+        console.log("first")
+        console.log(req.body)
         const { firstName, lastName, email, password,
             picturePath, friends, location, occupation } = req.body;
 
         const salt = await bcrypt.genSalt();
         const passHash = await bcrypt.hash(password, salt);
+
+        console.log(passHash)
 
         const newUser = new User({
             firstName, lastName, email, password: passHash,
@@ -18,9 +22,11 @@ export const register = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
+        console.log(savedUser);
         res.status(201).json(savedUser);
 
     } catch (err) {
+        console.log(err.message);
         res.status(201).json({ error: err.message });
     }
 }
@@ -30,7 +36,7 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = User.findOne({ email })
-
+        console.log(email, password)
         if (!user) {
             return res.status(400).json({ msg: "User not found" })
         }
