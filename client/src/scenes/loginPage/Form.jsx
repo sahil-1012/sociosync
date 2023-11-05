@@ -80,6 +80,7 @@ const Form = () => {
     }
 
     const register = async (values, onSubmitProps) => {
+        console.log(PORT)
         const formData = new FormData();
 
         for (let key in values) {
