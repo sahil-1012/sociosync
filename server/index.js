@@ -34,8 +34,6 @@ app.use(express.urlencoded({ limit: "30mb", extended: true }))
 app.use(cors())
 
 
-
-
 // MONGOOSE SETUP
 const PORT = process.env.PORT || 6001
 
@@ -60,11 +58,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-/* // ~ ROUTES WITH FILES */
-app.post("/auth/register", upload.single('picture'), register)
-app.post("/posts", verifyToken, upload.single('picture'), createPost)
 
+
+app.use("/", (req, res) => {
+    res.send("Welcome to sociopedia Server");
+  });
 
 app.use("/auth", authRoutes)
 app.use("/users", userRoutes)
+
+    /* // ~ ROUTES WITH FILES */
+    app.post("/auth/register", upload.single('picture'), register)
+    app.post("/posts", verifyToken, upload.single('picture'), createPost)
 app.use("/posts", postRoutes)
