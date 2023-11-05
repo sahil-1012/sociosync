@@ -80,9 +80,8 @@ const Form = () => {
     }
 
     const register = async (values, onSubmitProps) => {
-        console.log(PORT)
         const formData = new FormData();
-
+        
         for (let key in values) {
             // Handle the 'picture' field separately
             if (key === 'picture') {
@@ -92,7 +91,8 @@ const Form = () => {
         }
 
         // FORMDATA CAN'T BE TREATED AS NORMAL OBJECT
-        // console.log(...formData);
+        console.log(...formData);
+        console.log(`${PORT}/auth/register`)
         try {
             const savedUserResponse = await fetch(
                 `${PORT}/auth/register`,
