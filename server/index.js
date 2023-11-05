@@ -16,7 +16,6 @@ import postRoutes from "./routes/posts.js";
 import { verifyToken } from "./middleware/auth.js";
 import { register } from "./controller/auth.js";
 import { createPost } from "./controller/post.js";
-import fs from "fs";
 
 /* CONFIGURATION */
 const __filename = fileURLToPath(import.meta.url)
@@ -47,42 +46,18 @@ mongoose.connect(process.env.MONGO_URL, {
 
 
 
-// app.use("/assets", express.static(path.join(__dirname, 'public/assets')))
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, "public/assets")
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.originalname);
-//     }
-// })
-
-// const upload = multer({ storage });
-
-// Define the destination directory
-const destinationDirectory = path.join(__dirname, 'public/assets');
-
-// Ensure the destination directory exists or create it
-if (!fs.existsSync(destinationDirectory)) {
-    fs.mkdirSync(destinationDirectory, { recursive: true });
-}
-
-app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
-
+app.use("/assets", express.static(path.join(__dirname, 'assets')))
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Ensure the destination directory exists or create it
-        if (!fs.existsSync(destinationDirectory)) {
-            fs.mkdirSync(destinationDirectory, { recursive: true });
-        }
-        cb(null, destinationDirectory);
+        cb(null, "assets")
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
     }
-});
+})
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
+
 
 
 // app.use("/", (req, res) => {
