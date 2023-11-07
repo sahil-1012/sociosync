@@ -6,5 +6,5 @@ export function formatDate(timestamp) {
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const formattedTime = `${hours}.${minutes}`;
 
-    return `${formattedDate} ${formattedTime}`;
+    return <p>{formattedDate} {formattedTime}</p>
 }

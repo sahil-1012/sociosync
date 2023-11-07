@@ -12,7 +12,7 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setComments, setPost } from "state";
+import {  setPost } from "state";
 
 
 const PORT = process.env.REACT_APP_HOST;
@@ -34,12 +34,14 @@ const PostWidget = ({ postId,
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
+  console.log(likes)
   const isLiked = Boolean(likes?.[loggedInUserId]);
   const likeCount = likes ? Object.keys(likes).length : 0;
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+  const medium = palette.neutral.medium;
 
   const patchLike = async () => {
     const response = await fetch(`${PORT}/posts/${postId}/like`, {
@@ -53,6 +55,7 @@ const PostWidget = ({ postId,
 
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
+
   };
 
   const submitComment = async () => {
@@ -65,9 +68,10 @@ const PostWidget = ({ postId,
       body: JSON.stringify({ userId: loggedInUserId, postId, comment }),
     });
 
-    const updatedComments = await response.json();
-
-    dispatch(setComments({ comments: updatedComments }));
+    const updatedPost = await response.json();
+    console.log(updatedPost)
+    setComment("")
+    dispatch(setPost({ post: updatedPost }));
   };
 
 
@@ -90,7 +94,7 @@ const PostWidget = ({ postId,
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`http://localhost:3001/assets/${picturePath}`}
+          src={`${PORT}/assets/${picturePath}`}
         />
       )}
       <FlexBetween mt="0.25rem">
@@ -138,22 +142,28 @@ const PostWidget = ({ postId,
               Send
             </Button>
           </Box>
+
           {comments?.map((comment, i) => (
             <>
               <FlexBetween key={`${name}-${i}`}>
-                <Typography variant="caption" sx={{ color: "text.secondary", pl: "1rem", width: '100%' }}>
-                  {formatDate(comment.timestamp)} {/* Display the formatted timestamp */}
+                <Typography
+                  color={main}
+                  variant="h5"
+                  fontWeight="500"
+                  style={{ width: '100%', height: '100%' }}
+                >
+                  {comment.username}
                 </Typography>
 
-                <Typography variant="caption" sx={{ color: "text.secondary", pl: "1rem" }}>
+                <Typography variant="caption" color={medium} fontSize="0.7rem" sx={{ pl: '1rem', mb: '0px', display: 'flex', width: '150px' }}>
+                  {formatDate(comment.timestamp)}
                 </Typography>
-
-
-                <Divider />
               </FlexBetween>
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem", width: '100%' }} fullWidth>
-                {comment.message} {/* Display the comment message */}
+
+              <Typography mb='1rem' color={medium} sx={{ pl: "2px", width: '100%' }} fullWidth>
+                {comment.message}
               </Typography>
+
             </>
           ))}
 

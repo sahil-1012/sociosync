@@ -29,10 +29,6 @@ export const authSlice = createSlice({
                 console.error("User friends don't exist")
             }
         },
-        
-        setComments: (state, action) => {
-            state.comments = action.payload.comments;
-        },
 
         setPosts: (state, action) => {
             state.posts = action.payload.posts;
@@ -48,5 +44,5 @@ export const authSlice = createSlice({
     }
 })
 
-export const { setMode, setLogin, setLogout, setPost, setPosts, setComments, setFriends } = authSlice.actions;
+export const { setMode, setLogin, setLogout, setPost, setPosts, setFriends } = authSlice.actions;
 export default authSlice.reducer;

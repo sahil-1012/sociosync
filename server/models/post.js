@@ -11,7 +11,7 @@ const postSchema = new mongoose.Schema({
     userPicturePath: String,
     likes: { type: Map, of: Boolean },
     comments: [{
-        user: { type: String, required: true },
+        userId: { type: String, required: true },
         message: { type: String, required: true, },
         timestamp: { type: Date, default: Date.now, },
     }],
