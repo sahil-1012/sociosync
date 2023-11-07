@@ -7,8 +7,7 @@ const router = express.Router();
 
 router.get('/', verifyToken, getFeedPosts);
 router.get('/:userId/posts', verifyToken, getUserPosts);
-
-router.get('/:userId/like', verifyToken, likePost);
+router.patch('/:postId/like', verifyToken, likePost);
 
 export default router;
 

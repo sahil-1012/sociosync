@@ -11,7 +11,7 @@ const UserImage = ({ image, size = '60px' }) => {
                 alt='user'
                 src={`${PORT}/assets/${image}`}
             />
-
+            
         </Box>
     )
 }

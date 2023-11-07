@@ -7,20 +7,24 @@ export const createPost = async (req, res, next) => {
     try {
         const { userId, description, picturePath } = req.body;
         const user = await User.findById(userId)
+        console.log(userId, description, picturePath)
         const newPost = new Post({
-            user, description, picturePath,
+            userId, description, picturePath,
             firstName: user.firstName, lastName: user.lastName,
             location: user.location, userPicturePath: user.picturePath,
-            likes: {}, comments: []
+            likes: {},
         })
+
         await newPost.save();
 
-        // const post = Post.find({userId})
-        const post = Post.find()
-        res.status(201).json(post)
+
+        const posts = await Post.find().sort({ createdAt: -1 });
+        // const post = await Post.find()
+        res.status(201).json(posts)
 
 
     } catch (err) {
+        console.log(err.message)
         return res.status(409).json({ message: err.message });
     }
 }
@@ -28,7 +32,7 @@ export const createPost = async (req, res, next) => {
 // READ
 export const getFeedPosts = async (req, res) => {
     try {
-        const post = await Post.find();
+        const post = await Post.find().sort({ createdAt: -1 });;
         return res.status(200).json(post)
 
     } catch (err) {
@@ -39,7 +43,7 @@ export const getFeedPosts = async (req, res) => {
 export const getUserPosts = async (req, res,) => {
     try {
         const { userId } = req.body;
-        const posts = await User.find({ userId })
+        const posts = await User.find({ userId }).sort({ createdAt: -1 });
         return res.status(200).json(posts);
     } catch (err) {
         return res.status(404).json({ message: err.message });
@@ -49,9 +53,9 @@ export const getUserPosts = async (req, res,) => {
 // UPDATE
 export const likePost = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { postId } = req.params;
         const { userId } = req.body;
-        const post = Post.findById(id);
+        const post = await Post.findById(postId);
         const isLiked = post.likes.get(userId);
 
         if (isLiked) {
@@ -59,7 +63,7 @@ export const likePost = async (req, res, next) => {
         } else {
             post.likes.set(userId, true);
         }
-        const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes }, { new: true })
+        const updatedPost = await Post.findByIdAndUpdate(postId, { likes: post.likes }, { new: true })
         res.status(200).json(updatedPost);
 
     } catch (err) {

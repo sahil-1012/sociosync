@@ -7,13 +7,14 @@ const postSchema = new mongoose.Schema({
     lastName: { type: String, required: true, min: 2, max: 50 },
     location: String,
     description: String,
-    picturePath: Number,
-    userPicturePath: Number,
+    picturePath: String,
+    userPicturePath: String,
     likes: { type: Map, of: Boolean },
-    comments: {
-        type: Array,
-        default: []
-    },
+    comments: [{
+        user: { type: String, required: true },
+        message: { type: String, required: true, },
+        timestamp: { type: Date, default: Date.now, },
+    }],
 
 }, { timestamps: true }
 );

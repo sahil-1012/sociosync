@@ -13,6 +13,7 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
 import postRoutes from "./routes/posts.js";
+import commentRoutes from "./routes/comment.js";
 import { verifyToken } from "./middleware/auth.js";
 import { register } from "./controller/auth.js";
 import { createPost } from "./controller/post.js";
@@ -71,3 +72,4 @@ app.use("/users", userRoutes)
 app.post("/auth/register", upload.single('picture'), register)
 app.post("/posts", verifyToken, upload.single('picture'), createPost)
 app.use("/posts", postRoutes)
+app.use("/comment", commentRoutes)
