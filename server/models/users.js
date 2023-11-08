@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
     occupation: String,
     viewedProfile: Number,
     impressions: Number,
+    picture: Buffer
 }, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);

@@ -77,31 +77,51 @@ const Form = () => {
     }
 
     const register = async (values, onSubmitProps) => {
-        const formData = new FormData();
+        const file = values.picture;
 
-        for (let key in values) {
-            // Handle the 'picture' field separately
-            if (key === 'picture') {
-                formData.append('picturePath', values[key].name);
-            }
-            formData.append(key, values[key]);
-        }
 
-        // FORMDATA CAN'T BE TREATED AS NORMAL OBJECT
-        console.log(...formData);
+
+
+        
+        
+        
+        const binaryPicture = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = (event) => {
+                const base64Data = event.target.result.split(',')[1]; // Remove the "data:image/..." part
+                resolve(base64Data);
+            };
+            
+            // reader.onload = (event) => {
+            //     const uint8Array = new Uint8Array(event.target.result);
+            //     resolve(uint8Array);
+            // };
+            
+            // reader.readAsArrayBuffer(file);
+            reader.readAsDataURL(file);
+        });
+        
+        // const blob = new Blob([binaryPicture], { type: "text/plain" });
+        // console.log(blob); // Check the format of binaryPicture
+        const data = {
+            ...values,
+            pic: binaryPicture,
+        };
+
         try {
-            const savedUserResponse = await fetch(
-                `${PORT}/auth/register`,
-                {
-                    method: 'POST',
-                    body: formData,
-                }
-            );
+            const savedUserResponse = await fetch(`${PORT}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', // Specify the Content-Type header
+                },
+                body: JSON.stringify(data),
+            });
 
             const savedUser = await savedUserResponse.json();
             if (savedUser.success) {
-                // setPageType('login');
-                // onSubmitProps.resetForm();
+                setPageType('login');
+                onSubmitProps.resetForm();
             } else {
                 // ****** ~ Server error popup
             }
@@ -110,6 +130,10 @@ const Form = () => {
         }
 
     }
+
+
+
+
 
     const handleFormSubmit = async (values, onSubmitProps) => {
 

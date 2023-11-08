@@ -5,7 +5,7 @@ const User = require('../models/users.js');
 const createPost = async (req, res, next) => {
     try {
         const { userId, description, picturePath } = req.body;
-        const user = await User.findById(userId)
+        const user = await User.findById(userId).select('-picture')
         console.log(userId, description, picturePath)
         const newPost = new Post({
             userId, description, picturePath,
@@ -38,7 +38,7 @@ const getFeedPosts = async (req, res) => {
 
             // Map over the comments for the current post and add the username to each comment
             const formattedComments = await Promise.all(post.comments.map(async (comment) => {
-                const user = await User.findById(comment.userId);
+                const user = await User.findById(comment.userId).select('-picture');
                 return {
                     ...comment.toObject(),
                     username: user.firstName + ' ' + user.lastName,
@@ -113,7 +113,7 @@ const likePost = async (req, res, next) => {
         const likesObject = Object.fromEntries(updatedPost.likes);
 
         const commentUserPromises = updatedPost.comments.map(async (comment) => {
-            const user = await User.findById(comment.userId);
+            const user = await User.findById(comment.userId).select('-picture');
             return {
                 ...comment.toObject(),
                 username: user.firstName + ' ' + user.lastName,

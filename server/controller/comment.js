@@ -15,7 +15,7 @@ const createComment = async (req, res) => {
         await post.save();
 
         const formattedComments = await Promise.all(post.comments.map(async (comment) => {
-            const user = await User.findById(comment.userId);
+            const user = await User.findById(comment.userId).select('-picture');
             return {
                 ...comment.toObject(),
                 username: user.firstName + ' ' + user.lastName,

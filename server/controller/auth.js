@@ -4,23 +4,22 @@ const User = require("../models/users.js");
 
 const register = async (req, res) => {
     try {
-        console.log(req)
         const { firstName, lastName, email, password,
-            picturePath, friends, location, occupation, picture } = req.body;
+            picturePath, friends, location, occupation, pic } = req.body;
 
-        console.log(req.body)
+        const binaryData = Buffer.from(pic, 'base64');
         const salt = await bcrypt.genSalt();
         const passHash = await bcrypt.hash(password, salt);
 
         const newUser = new User({
             firstName, lastName, email, password: passHash,
             picturePath, friends, location, occupation, viewedProfile: Math.floor(Math.random() * 10000),
-            impressions: Math.floor(Math.random() * 10000)
+            impressions: Math.floor(Math.random() * 10000),
+            picture: binaryData,
         });
 
-
-        // const savedUser = await newUser.save();
-        res.status(201).json({ success: true });
+        const savedUser = await newUser.save();
+        res.status(201).json({ savedUser, success: true });
 
     } catch (err) {
         console.log(err.message);
@@ -43,7 +42,7 @@ const login = async (req, res) => {
         }
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
         delete user.password;
-        console.log(user, token)
+        console.log(user)
         return res.status(200).json({ token, user, success: true })
     } catch (err) {
         console.log(err.message)

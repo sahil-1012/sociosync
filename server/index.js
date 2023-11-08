@@ -20,25 +20,17 @@ const { register } = require("./controller/auth.js");
 const { createPost } = require("./controller/post.js");
 const User = require("./models/users.js");
 
-const methodOverride = require('method-override');
-const GridFsStorage = require('multer-gridfs-storage');
-
-
-
 /* CONFIGURATION */
 // const __filename = fileURLToPath(import.meta.url)
 // const __dirname = path.dirname(__filename)
 configDotenv.config();
 
-const app = express();
 // app.use(helmet());
 // app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }))
 
+const app = express();
 app.use(cors())
-app.use(express.json())
-// app.use(express.json({ limit: "30mb", extended: true }))
-// app.use(express.urlencoded({ limit: "30mb", extended: true }))
-
+app.use(express.json({ limit: "10mb", extended: true }))
 
 
 
@@ -60,27 +52,8 @@ app.listen(PORT, () => {
 //     }
 // })
 
-// // create storage engine
-// const storage = new GridFsStorage({
-//     url: process.env.MONGO_URL,
-//     file: (req, file) => {
-//         return new Promise((resolve, reject) => {
-//             // encrypt filename before storing it
-//             crypto.randomBytes(16, (err, buf) => {
-//                 if (err) {
-//                     return reject(err);
-//                 } const filename = buf.toString('hex') + path.extname(file.originalname);
-//                 const fileInfo = {
-//                     filename: filename,
-//                     bucketName: 'uploads'
-//                 };
-//                 resolve(fileInfo);
-//             });
-//         });
-//     }
-// });
 
-// const upload = multer({ storage });
+
 
 
 // app.use("/", (req, res) => {
@@ -90,38 +63,54 @@ app.listen(PORT, () => {
 app.use("/auth", authRoutes)
 app.use("/users", userRoutes)
 
-
 /* // ~ ROUTES WITH FILES */
 // app.post("/auth/register",  register)
 
-// app.post('/auth/register', async (req, res) => {
-//     try {
-//         const { firstName, lastName, email, password,
-//             picturePath, friends, location, occupation, picture } = req.body;
+app.use(express.json({ limit: '10mb' })); // Set the limit as needed
 
-//         console.log(req.body)
-//         const salt = await bcrypt.genSalt();
-//         const passHash = await bcrypt.hash(password, salt);
+app.post('/auth/register', register);
 
-//         const newUser = new User({
-//             firstName, lastName, email, password: passHash,
-//             picturePath, friends, location, occupation, viewedProfile: Math.floor(Math.random() * 10000),
-//             impressions: Math.floor(Math.random() * 10000),
-//             picture: Buffer.from(picture, 'base64'), // Convert the base64 image to binary data
-//         });
+app.get('/users/image/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId).select('picture');
 
-//         await newUser.save();
-//         console.log(newUser)
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
 
-//         res.status(200).json(newUser);
-//     } catch (error) {
-//         res.status(500).json({ error: 'An error occurred while registering the user' });
-//     }
-// });
+        if (!user.picture) {
+            return res.status(404).json({ message: 'User does not have a picture' });
+        }
 
+        res.contentType('image/jpeg').send(user.picture);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+app.get('/files/:filename', (req, res) => {
+    gfs.photos.findOne({ filename: req.params.filename }, (err, file) => {
+        // Check if file
+
+        console.log(file)
+        if (!file || file.length === 0) {
+            return res.status(404).json({
+                err: 'No file exists'
+            });
+        }
+        // File exists
+        return res.json(file);
+    });
+});
 
 
 // app.post("/posts", verifyToken, upload.single('picture'), createPost)
-app.post("/posts", verifyToken, createPost)
-app.use("/posts", postRoutes)
+app.use("/users", userRoutes)
+app.use("/auth", authRoutes)
 app.use("/comment", commentRoutes)
+app.use("/posts", postRoutes)
+
+app.post("/posts", verifyToken, createPost)

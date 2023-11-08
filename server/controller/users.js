@@ -3,7 +3,7 @@ const User = require('../models/users.js');
 const getUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id);
+        const user = await User.findById(id).select('-picture');
         res.status(200).json(user);
 
     } catch (err) {
@@ -17,7 +17,7 @@ const updateName = async (req, res) => {
         const { id } = req.params;
         const { firstName, lastName } = req.body;
         console.log(id, firstName, lastName)
-        const user = await User.findByIdAndUpdate(id, { firstName, lastName }, { new: true });
+        const user = await User.findByIdAndUpdate(id, { firstName, lastName }, { new: true }).select('-picture');
 
         return res.status(200).json(user);
 
@@ -29,10 +29,10 @@ const updateName = async (req, res) => {
 const getUserFriends = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id);
+        const user = await User.findById(id).select('-picture');
 
         const friends = await Promise.all(
-            user.friends.map((id) => User.findById(id))
+            user.friends.map((id) => User.findById(id).select('-picture'))
         );
 
         const formattedFriends = friends.map(
@@ -53,9 +53,9 @@ const addRemoveFriends = async (req, res) => {
         const { id, friendId } = req.params;
         const userId = id
 
-        const user = await User.findById(userId);
+        const user = await User.findById(userId).select('-picture');
 
-        const friend = await User.findById(friendId);
+        const friend = await User.findById(friendId).select('-picture');
 
         // ~ IF FRIEND SAME AS USER THEN REMOVE ALL USERID
         if (friendId === userId) {
