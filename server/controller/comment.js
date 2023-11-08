@@ -1,8 +1,8 @@
-import Post from '../models/post.js';
-import User from '../models/users.js';
+const Post = require('../models/post.js');
+const User = require('../models/users.js');
 
 // CREATE
-export const createComment = async (req, res, next) => {
+const createComment = async (req, res) => {
     try {
         const { userId, postId, comment } = req.body;
         const post = await Post.findById(postId);
@@ -21,7 +21,7 @@ export const createComment = async (req, res, next) => {
                 username: user.firstName + ' ' + user.lastName,
             };
         }));
-        
+
         formattedComments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
         const responsePost = {
@@ -29,7 +29,7 @@ export const createComment = async (req, res, next) => {
             comments: formattedComments,
         };
 
-        res.status(200).json(responsePost);
+        return res.status(200).json(responsePost);
 
     } catch (err) {
 
@@ -37,3 +37,6 @@ export const createComment = async (req, res, next) => {
         return res.status(500).json({ message: "Server error" });
     }
 };
+
+
+module.exports = { createComment };

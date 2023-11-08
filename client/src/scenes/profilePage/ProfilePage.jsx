@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -7,15 +7,19 @@ import FriendListWidget from "scenes/widgets/FriendListWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
+ 
+const PORT = process.env.REACT_APP_HOST;
 
 const ProfilePage = () => {
+    const { palette } = useTheme();
+
     const [user, setUser] = useState(null);
     const { userId } = useParams();
     const token = useSelector((state) => state.token);
     const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
     const getUser = async () => {
-        const response = await fetch(`http://localhost:3001/users/${userId}`, {
+        const response = await fetch(`${PORT}/users/${userId}`, {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -26,6 +30,9 @@ const ProfilePage = () => {
     useEffect(() => {
         getUser();
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const currentUserId = useSelector((state) => state.user._id);
+
 
     if (!user) return null;
 
@@ -48,8 +55,17 @@ const ProfilePage = () => {
                     flexBasis={isNonMobileScreens ? "42%" : undefined}
                     mt={isNonMobileScreens ? undefined : "2rem"}
                 >
-                    <MyPostWidget picturePath={user.picturePath} />
-                    <Box m="2rem 0" />
+
+                    {userId === currentUserId &&
+                        <MyPostWidget picturePath={user.picturePath} />
+                    }
+
+                    <Box ml='2px' mt='2rem'>
+                        <Typography color={palette.dark} variant="h3" fontWeight="500">
+                            User Posts
+                        </Typography>
+                    </Box>
+
                     <PostsWidget userId={userId} isProfile />
                 </Box>
             </Box>

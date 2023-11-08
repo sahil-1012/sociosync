@@ -34,7 +34,6 @@ const PostWidget = ({ postId,
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
-  console.log(likes)
   const isLiked = Boolean(likes?.[loggedInUserId]);
   const likeCount = likes ? Object.keys(likes).length : 0;
 
@@ -69,7 +68,6 @@ const PostWidget = ({ postId,
     });
 
     const updatedPost = await response.json();
-    console.log(updatedPost)
     setComment("")
     dispatch(setPost({ post: updatedPost }));
   };

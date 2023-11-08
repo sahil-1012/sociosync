@@ -1,13 +1,14 @@
-import bcrypt from "bcrypt"
-import jwt from "jsonwebtoken"
-import User from "../models/users.js"
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/users.js");
 
-
-export const register = async (req, res) => {
+const register = async (req, res) => {
     try {
+        console.log(req)
         const { firstName, lastName, email, password,
-            picturePath, friends, location, occupation } = req.body;
+            picturePath, friends, location, occupation, picture } = req.body;
 
+        console.log(req.body)
         const salt = await bcrypt.genSalt();
         const passHash = await bcrypt.hash(password, salt);
 
@@ -17,8 +18,9 @@ export const register = async (req, res) => {
             impressions: Math.floor(Math.random() * 10000)
         });
 
-        const savedUser = await newUser.save();
-        res.status(201).json({ savedUser, success: true });
+
+        // const savedUser = await newUser.save();
+        res.status(201).json({ success: true });
 
     } catch (err) {
         console.log(err.message);
@@ -27,7 +29,7 @@ export const register = async (req, res) => {
 }
 
 //  *****  LOGGING IN
-export const login = async (req, res) => {
+const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email })
@@ -48,3 +50,5 @@ export const login = async (req, res) => {
         res.status(500).json({ error: err.message })
     }
 }
+
+module.exports = { register, login };

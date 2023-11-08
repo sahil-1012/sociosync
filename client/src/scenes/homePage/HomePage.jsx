@@ -1,4 +1,4 @@
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useSelector } from "react-redux";
 import Navbar from "scenes/navbar/Navbar";
 import UserWidget from "scenes/widgets/UserWidget";
@@ -10,6 +10,7 @@ import FriendListWidget from "scenes/widgets/FriendListWidget";
 const HomePage = () => {
     const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
     const { _id, picturePath } = useSelector((state) => state.user);
+    const { palette } = useTheme();
 
     return (
         <Box>
@@ -29,6 +30,13 @@ const HomePage = () => {
                     mt={isNonMobileScreens ? undefined : "2rem"}
                 >
                     <MyPostWidget picturePath={picturePath} />
+
+                    <Box ml='2px' mt='2rem'>
+                        <Typography color={palette.dark} variant="h3" fontWeight="500">
+                            Recent Posts
+                        </Typography>
+
+                    </Box>
                     <PostsWidget userId={_id} />
                 </Box>
                 {isNonMobileScreens && (

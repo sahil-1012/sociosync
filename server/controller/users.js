@@ -1,6 +1,6 @@
-import User from '../models/users.js'
+const User = require('../models/users.js');
 
-export const getUser = async (req, res) => {
+const getUser = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await User.findById(id);
@@ -11,7 +11,22 @@ export const getUser = async (req, res) => {
     }
 }
 
-export const getUserFriends = async (req, res) => {
+const updateName = async (req, res) => {
+    try {
+        console.log("first")
+        const { id } = req.params;
+        const { firstName, lastName } = req.body;
+        console.log(id, firstName, lastName)
+        const user = await User.findByIdAndUpdate(id, { firstName, lastName }, { new: true });
+
+        return res.status(200).json(user);
+
+    } catch (err) {
+        res.status(400).json({ message: err.message })
+    }
+}
+
+const getUserFriends = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await User.findById(id);
@@ -33,7 +48,7 @@ export const getUserFriends = async (req, res) => {
     }
 }
 
-export const addRemoveFriends = async (req, res) => {
+const addRemoveFriends = async (req, res) => {
     try {
         const { id, friendId } = req.params;
         const userId = id
@@ -57,7 +72,7 @@ export const addRemoveFriends = async (req, res) => {
             user.friends.push(friendId);
             friend.friends.push(userId);
         }
-        
+
         await user.save();
         await friend.save();
 
@@ -82,3 +97,5 @@ export const addRemoveFriends = async (req, res) => {
         res.status(404).json({ message: err.message });
     }
 }
+
+module.exports = { getUser, updateName, getUserFriends, addRemoveFriends };

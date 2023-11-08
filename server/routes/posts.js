@@ -1,13 +1,11 @@
-import express from "express";
-import { verifyToken } from "../middleware/auth.js";
-import { getFeedPosts, getUserPosts, likePost } from "../controller/post.js";
+const express = require("express");
+const { verifyToken } = require("../middleware/auth.js");
+const { getFeedPosts, getUserPosts, likePost } = require("../controller/post.js");
 
-const router = express.Router();  
-
+const router = express.Router();
 
 router.get('/', verifyToken, getFeedPosts);
 router.get('/:userId/posts', verifyToken, getUserPosts);
 router.patch('/:postId/like', verifyToken, likePost);
 
-export default router;
-
+module.exports = router;

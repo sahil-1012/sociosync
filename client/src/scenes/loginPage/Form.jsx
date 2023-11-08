@@ -88,7 +88,7 @@ const Form = () => {
         }
 
         // FORMDATA CAN'T BE TREATED AS NORMAL OBJECT
-        // console.log(...formData);
+        console.log(...formData);
         try {
             const savedUserResponse = await fetch(
                 `${PORT}/auth/register`,
@@ -100,8 +100,8 @@ const Form = () => {
 
             const savedUser = await savedUserResponse.json();
             if (savedUser.success) {
-                setPageType('login');
-                onSubmitProps.resetForm();
+                // setPageType('login');
+                // onSubmitProps.resetForm();
             } else {
                 // ****** ~ Server error popup
             }

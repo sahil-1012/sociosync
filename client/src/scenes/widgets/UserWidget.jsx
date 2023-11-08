@@ -1,14 +1,26 @@
+import { setCurrentUser, setLogin } from "state";
+
 const { ManageAccountsOutlined, LocationOnOutlined, WorkOutlineOutlined, EditOutlined, LinkedIn, Twitter } = require("@mui/icons-material");
-const { useTheme, Typography, Divider, Box } = require("@mui/material");
+const { useTheme, Typography, Divider, Box, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, Button, DialogActions, TextField } = require("@mui/material");
 const { default: FlexBetween } = require("components/FlexBetween");
 const { default: UserImage } = require("components/UserImage");
 const { default: WidgetWrapper } = require("components/WidgetWrapper");
 const { useEffect, useState } = require("react");
-const { useSelector } = require("react-redux");
+const { useSelector, useDispatch } = require("react-redux");
 const { useNavigate } = require("react-router-dom");
+
 const PORT = process.env.REACT_APP_HOST;
 
 const UserWidget = ({ userId, picturePath }) => {
+
+  const dispatch = useDispatch();
+  const currentUserId = useSelector((state) => state.user._id);
+
+
+  const [modal, setModal] = useState(false);
+  const openModal = () => { setModal(true) }
+  const closeModal = () => { setModal(false) }
+
   const [user, setUser] = useState(null);
   const { palette } = useTheme();
   const navigate = useNavigate();
@@ -17,7 +29,10 @@ const UserWidget = ({ userId, picturePath }) => {
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
 
-  const getUser = async () => {
+  const getUser = async (event) => {
+    if (event) {
+      event.preventDefault();
+    }
     const response = await fetch(`${PORT}/users/${userId}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
@@ -26,12 +41,41 @@ const UserWidget = ({ userId, picturePath }) => {
     setUser(data);
   };
 
+  const [newName, setNewName] = useState(null);
+
   useEffect(() => {
-    getUser();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!user?.firstName) {
+      getUser();
+    }
+    console.log("first")
+    if (user && newName === null) {
+      setNewName(user.firstName + " " + user.lastName)
+    }
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {
     return null;
+  }
+
+  const submitName = async () => {
+    const nameParts = newName.split(' ');
+    const firstName = nameParts[0];
+    const lastName = nameParts.slice(1).join(' '); // The rest as the last name
+
+    const response = await fetch(`${PORT}/users/${userId}/updateName`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ firstName, lastName }),
+    });
+
+    const updatedUser = await response.json();
+    dispatch(setCurrentUser({ user: updatedUser }));
+    closeModal();
+    console.log(updatedUser)
+    getUser();
   }
 
   const {
@@ -50,11 +94,14 @@ const UserWidget = ({ userId, picturePath }) => {
       <FlexBetween
         gap="0.5rem"
         pb="1.1rem"
-        onClick={() => navigate(`/profile/${userId}`)}
       >
         <FlexBetween gap="1rem">
-          <UserImage image={picturePath} />
-          <Box>
+          <UserImage image={picturePath}
+            onClick={() => navigate(`/profile/${userId}`)}
+          />
+          <Box
+            onClick={() => navigate(`/profile/${userId}`)}
+          >
             <Typography
               variant="h4"
               color={dark}
@@ -71,8 +118,39 @@ const UserWidget = ({ userId, picturePath }) => {
             <Typography color={medium}>{friends?.length} friends</Typography>
           </Box>
         </FlexBetween>
-        <ManageAccountsOutlined />
+
+        {userId === currentUserId &&
+          <IconButton onClick={openModal}>
+            <ManageAccountsOutlined />
+          </IconButton>
+        }
       </FlexBetween>
+
+      <Dialog
+        open={modal}
+        onClose={closeModal}
+        maxWidth='450px'
+      >
+        <DialogTitle
+          style={{ width: '400px' }}
+        >Edit Profile Name</DialogTitle>
+        <DialogContent >
+          <TextField
+            fullWidth
+            name="newName"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeModal} style={{ color: '#e53935' }}>Discard</Button>
+          <Button onClick={submitName} autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+
+      </Dialog>
 
       <Divider />
 
@@ -140,7 +218,7 @@ const UserWidget = ({ userId, picturePath }) => {
           <EditOutlined sx={{ color: main }} />
         </FlexBetween>
       </Box>
-    </WidgetWrapper>
+    </WidgetWrapper >
   );
 };
 

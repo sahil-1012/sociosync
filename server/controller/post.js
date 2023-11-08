@@ -1,9 +1,8 @@
-import Post from '../models/post.js';
-import User from '../models/users.js';
-
+const Post = require('../models/post.js');
+const User = require('../models/users.js');
 
 // CREATE
-export const createPost = async (req, res, next) => {
+const createPost = async (req, res, next) => {
     try {
         const { userId, description, picturePath } = req.body;
         const user = await User.findById(userId)
@@ -30,10 +29,10 @@ export const createPost = async (req, res, next) => {
 }
 
 // READ
-export const getFeedPosts = async (req, res) => {
+const getFeedPosts = async (req, res) => {
     try {
         const posts = await Post.find().sort({ createdAt: -1 });
-        
+
         const formattedPosts = await Promise.all(posts.map(async (post) => {
             const likesObject = Object.fromEntries(post.likes);
 
@@ -45,7 +44,7 @@ export const getFeedPosts = async (req, res) => {
                     username: user.firstName + ' ' + user.lastName,
                 };
             }));
-            
+
             formattedComments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             return {
                 ...post.toObject(),
@@ -63,10 +62,32 @@ export const getFeedPosts = async (req, res) => {
 }
 
 
-export const getUserPosts = async (req, res,) => {
+const getUserPosts = async (req, res,) => {
     try {
-        const { userId } = req.body;
-        const posts = await User.find({ userId }).sort({ createdAt: -1 });
+        const { userId } = req.params;
+        const posts = await Post.find({ userId }).sort({ createdAt: -1 });
+
+        const formattedPosts = await Promise.all(posts.map(async (post) => {
+            const likesObject = Object.fromEntries(post.likes);
+
+            // Map over the comments for the current post and add the username to each comment
+            const formattedComments = await Promise.all(post.comments.map(async (comment) => {
+                const user = await User.findById(comment.userId);
+                return {
+                    ...comment.toObject(),
+                    username: user.firstName + ' ' + user.lastName,
+                };
+            }));
+
+            formattedComments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            return {
+                ...post.toObject(),
+                likes: likesObject, // Include the 'likes' as a plain object
+                comments: formattedComments,
+            };
+
+        }).sort((a, b) => b.createdAt - a.createdAt));
+
         return res.status(200).json(posts);
     } catch (err) {
         return res.status(404).json({ message: err.message });
@@ -74,7 +95,7 @@ export const getUserPosts = async (req, res,) => {
 }
 
 // UPDATE
-export const likePost = async (req, res, next) => {
+const likePost = async (req, res, next) => {
     try {
         const { postId } = req.params;
         const { userId } = req.body;
@@ -117,3 +138,6 @@ export const likePost = async (req, res, next) => {
         return res.status(404).json({ message: err.message });
     }
 }
+
+
+module.exports = { createPost, getFeedPosts, getUserPosts, likePost };

@@ -4,6 +4,8 @@ import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 import { Box, Typography, useTheme } from "@mui/material";
 
+const PORT = process.env.REACT_APP_HOST;
+
 const PostsWidget = ({ userId, isProfile = false }) => {
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
@@ -13,18 +15,17 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const token = useSelector((state) => state.token);
 
   const getPosts = async () => {
-    const response = await fetch("http://localhost:3001/posts", {
+    const response = await fetch(`${PORT}/posts`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
-    console.log(data)
     dispatch(setPosts({ posts: data }));
   };
 
   const getUserPosts = async () => {
     const response = await fetch(
-      `http://localhost:3001/posts/${userId}/posts`,
+      `${PORT}/posts/${userId}/posts`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
@@ -44,11 +45,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   return (
     <>
-      <Box ml='2px' mt='2rem'>
-        <Typography color={palette.dark} variant="h3" fontWeight="500">
-          Recent Posts
-        </Typography>
-      </Box>
       {posts.length > 0 && posts?.map(
         ({
           _id,
