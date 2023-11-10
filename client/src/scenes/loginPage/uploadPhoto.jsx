@@ -19,6 +19,7 @@ const UploadPhoto = ({ handleSkip, uploadURL }) => {
     // }, [uploadURL])
 
     const handleConfirmUpload = async () => {
+        console.log(uploadURL)
         if (selectedPhoto && uploadURL) {
             try {
 
