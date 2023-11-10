@@ -8,7 +8,7 @@ const register = async (req, res) => {
         const { firstName, lastName, email, password,
             picturePath, friends, location, occupation } = req.body;
 
-        console.log(firstName, lastName, email, password)
+            
         const salt = await bcrypt.genSalt();
         const passHash = await bcrypt.hash(password, salt);
 
