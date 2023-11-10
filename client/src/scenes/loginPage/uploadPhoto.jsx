@@ -27,7 +27,7 @@ const UploadPhoto = ({ handleSkip, uploadURL }) => {
                 formData.append('file', selectedPhoto);
                 console.log("formData")
 
-                const response = await fetch('https://cors-anywhere.herokuapp.com/' + uploadURL, {
+                const response = await fetch( uploadURL, {
                     headers: {
                         'Content-Type': 'application/json',
                         // Add other headers as needed
