@@ -6,7 +6,7 @@ import Dropzone from 'react-dropzone';
 
 const UploadPhoto = ({ handleSkip }) => {
 
-    const uploadURL = 'https://sociopedia.s3.us-east-005.backblazeb2.com/654e1017331edcc7228b5382.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=0052c4efc5df2780000000004%2F20231110%2Fus-east-005%2Fs3%2Faws4_request&X-Amz-Date=20231110T111223Z&X-Amz-Expires=900&X-Amz-Signature=ce3f05a882dcc828d370dbb8ac93710ed9fc25beee6da80a1a9ea24cc6df77ef&X-Amz-SignedHeaders=host&x-id=PutObject'
+    const uploadURL = 'https://sociopedia.s3.us-east-005.backblazeb2.com/654e15dea2cfb26b86e561a6.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=0052c4efc5df2780000000004%2F20231110%2Fus-east-005%2Fs3%2Faws4_request&X-Amz-Date=20231110T113702Z&X-Amz-Expires=900&X-Amz-Signature=217ee4593bc0076754ea0b5a05f698dbe3365bed03414d48d727d12d22b3be6c&X-Amz-SignedHeaders=host&x-id=PutObject'
     const { palette } = useTheme();
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const isNonMobile = useMediaQuery("(min-width:600px)")
@@ -24,8 +24,12 @@ const UploadPhoto = ({ handleSkip }) => {
                 const formData = new FormData();
                 formData.append('file', selectedPhoto);
                 console.log(formData)
-                const response = await fetch(uploadURL, {
+
+                const response = await fetch('https://sociopedia.s3.us-east-005.backblazeb2.com/img.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=0052c4efc5df2780000000004%2F20231110%2Fus-east-005%2Fs3%2Faws4_request&X-Amz-Date=20231110T120538Z&X-Amz-Expires=900&X-Amz-Signature=e2730845b418c1b27774fb95629c856dd79e1925cfa66f6236ec03e50610c1d0&X-Amz-SignedHeaders=host&x-id=PutObject', {
                     method: 'PUT',
+                    headers: {
+                        'Content-Type': 'image/jpeg', // Set the content type here
+                    },
                     body: formData,
                 });
 
