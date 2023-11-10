@@ -97,11 +97,11 @@ const Navbar = () => {
                             }}
                             input={<InputBase />}
                         >
-                            <MenuItem value={fullName}>
-                                <Typography>{fullName}</Typography>
+                            <MenuItem value={fullName} >
+                                <Typography style={{ padding: '0px 12px' }}>{fullName}</Typography>
                             </MenuItem>
                             <MenuItem onClick={() => dispatch(setLogout())}>
-                                Log Out
+                                <span style={{ padding: '0px 12px' }}>Log Out</span>
                             </MenuItem>
                         </Select>
                     </FormControl>
@@ -133,7 +133,7 @@ const Navbar = () => {
 
                     {/* //  ~ MENU ITEMS */}
                     <FlexBetween display='flex' flexDirection='column' justifyContent='center' alignItems='center' gap='2rem'>
-                        <IconButton  sx={{ fontSize: '25px' }} onClick={() => dispatch(setMode())}>
+                        <IconButton sx={{ fontSize: '25px' }} onClick={() => dispatch(setMode())}>
                             {theme.palette.mode === 'dark' ? (
                                 <DarkMode sx={{ fontSize: '25px' }} />
                             ) : (

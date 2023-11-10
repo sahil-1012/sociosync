@@ -61,22 +61,17 @@ const MyPostWidget = () => {
     if (photoElements.url === null || photoElements.url === undefined) {
       getPostPhotoUrl()
     }
-
   }, [])
 
   const handlePost = async () => {
     try {
-      const formData = new FormData();
-      formData.append('file', image);
-
-      const response = await fetch('https://cors-anywhere.herokuapp.com/' + photoElements.url, {
+      const response = await fetch(photoElements.url, {
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'image/jpeg',
         },
         method: 'PUT',
-        body: formData,
+        body: image,
       });
-      console.log("object");
       if (response.ok) {
         console.log('Image uploaded successfully!');
 

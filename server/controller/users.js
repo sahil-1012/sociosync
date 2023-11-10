@@ -1,22 +1,42 @@
-const { uploadFile } = require('../cloud/utils.js');
+const { uploadFile, getFile } = require('../cloud/utils.js');
 const User = require('../models/users.js');
 
 const getUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id).select('-picture');
-        res.status(200).json(user);
+        const user = await User.findById(id);
+        const photo = `https://sociopedia.s3.us-east-005.backblazeb2.com/${user._id}.jpeg`;
+
+        const formattedUser = {
+            ...user.toObject(),
+            photo,
+        };
+        console.log(formattedUser);
+        res.status(200).json({ user: formattedUser });
 
     } catch (err) {
-        res.status(400).json({ message: err.message })
+        res.status(400).json({ message: err.message });
     }
-}
+};
 
 const uploadProfilePhoto = async (req, res) => {
     try {
         const { id } = req.params;
         const contentType = 'image/jpeg'
         const url = await uploadFile(id, contentType)
+        res.status(200).json({ url });
+
+    } catch (err) {
+        res.status(400).json({ message: err.message })
+    }
+}
+
+const getProfilePhoto = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const contentType = 'image/jpeg'
+        const url = await getFile(id, contentType)
+        console.log(url);
         res.status(200).json({ url });
 
     } catch (err) {
@@ -111,4 +131,4 @@ const addRemoveFriends = async (req, res) => {
     }
 }
 
-module.exports = { getUser, uploadProfilePhoto, updateName, getUserFriends, addRemoveFriends };
+module.exports = { getUser, uploadProfilePhoto, getProfilePhoto, updateName, getUserFriends, addRemoveFriends };

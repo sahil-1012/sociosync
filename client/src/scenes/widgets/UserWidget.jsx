@@ -11,7 +11,7 @@ const { useNavigate } = require("react-router-dom");
 
 const PORT = process.env.REACT_APP_HOST;
 
-const UserWidget = ({ userId, image }) => {
+const UserWidget = ({ userId }) => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.user._id);
 
@@ -19,7 +19,7 @@ const UserWidget = ({ userId, image }) => {
   const openModal = () => { setModal(true) }
   const closeModal = () => { setModal(false) }
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
@@ -31,24 +31,29 @@ const UserWidget = ({ userId, image }) => {
     if (event) {
       event.preventDefault();
     }
+
     const response = await fetch(`${PORT}/users/${userId}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
     });
     const data = await response.json();
-    setUser(data);
+    setUser(data.user);
   };
 
   const [newName, setNewName] = useState(null);
 
   useEffect(() => {
-    if (!user?.firstName) {
-      getUser();
+    const fetchData = async () => {
+      if (user?.firstName === null || user?.firstName === undefined) {
+        await getUser();
+      }
+    };
+    fetchData();
+
+    if (user.newName && newName === null) {
+      setNewName(user.firstName + " " + user.lastName);
     }
-    if (user && newName === null) {
-      setNewName(user.firstName + " " + user.lastName)
-    }
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [user]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {
     return null;
@@ -71,7 +76,6 @@ const UserWidget = ({ userId, image }) => {
     const updatedUser = await response.json();
     dispatch(setCurrentUser({ user: updatedUser }));
     closeModal();
-    console.log(updatedUser)
     getUser();
   }
 
@@ -83,6 +87,7 @@ const UserWidget = ({ userId, image }) => {
     viewedProfile,
     impressions,
     friends,
+    photo
   } = user;
 
   return (
@@ -93,7 +98,7 @@ const UserWidget = ({ userId, image }) => {
         pb="1.1rem"
       >
         <FlexBetween gap="1rem">
-          <UserImage image={image} onClick={() => navigate(`/profile/${userId}`)} />
+          <UserImage image={photo} onClick={() => navigate(`/profile/${userId}`)} />
           <Box
             onClick={() => navigate(`/profile/${userId}`)}
           >

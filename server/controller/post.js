@@ -24,6 +24,7 @@ const createPost = async (req, res) => {
         return res.status(409).json({ message: err.message });
     }
 }
+
 const createPhotoUrl = async (req, res) => {
     try {
         const contentType = 'image/jpeg'
