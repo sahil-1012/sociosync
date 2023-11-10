@@ -5,6 +5,7 @@ const { getFeedPosts, getUserPosts, likePost } = require("../controller/post.js"
 const router = express.Router();
 
 router.get('/', verifyToken, getFeedPosts);
+app.post("/addPost", verifyToken, createPost)   
 router.get('/:userId/posts', verifyToken, getUserPosts);
 router.patch('/:postId/like', verifyToken, likePost);
 

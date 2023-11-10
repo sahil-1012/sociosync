@@ -82,10 +82,9 @@ app.get('/files/:filename', (req, res) => {
     });
 });
 
-app.post("/posts", verifyToken, createPost)
+app.use("/posts", postRoutes)
 app.use("/users", userRoutes)
 app.use("/auth", authRoutes)
 app.use("/comment", commentRoutes)
-app.use("/posts", postRoutes)
 // app.post("/posts", verifyToken, createPost)
 

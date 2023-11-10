@@ -76,6 +76,7 @@ const MyPostWidget = () => {
             padding: "1rem 2rem",
           }}
         />
+
       </FlexBetween>
       {isImage && (
         <Box
