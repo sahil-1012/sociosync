@@ -31,6 +31,12 @@ configDotenv.config();
 const app = express();
 app.use(express.json())
 app.use(cors())
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization'); // Add 'Authorization' to the header
+    next();
+});
 
 // MONGOOSE SETUP
 const PORT = process.env.PORT || 6001
