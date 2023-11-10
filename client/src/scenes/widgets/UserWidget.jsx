@@ -11,7 +11,7 @@ const { useNavigate } = require("react-router-dom");
 
 const PORT = process.env.REACT_APP_HOST;
 
-const UserWidget = ({ userId }) => {
+const UserWidget = ({ userId, image }) => {
   const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.user._id);
 
@@ -93,8 +93,7 @@ const UserWidget = ({ userId }) => {
         pb="1.1rem"
       >
         <FlexBetween gap="1rem">
-          <UserImage userId={userId} onClick={() => navigate(`/profile/${userId}`)}
-          />
+          <UserImage image={image} onClick={() => navigate(`/profile/${userId}`)} />
           <Box
             onClick={() => navigate(`/profile/${userId}`)}
           >

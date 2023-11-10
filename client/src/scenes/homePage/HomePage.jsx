@@ -25,7 +25,7 @@ const HomePage = () => {
                 justifyContent="space-between"
             >
                 <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-                    <UserWidget userId={_id} />
+                    <UserWidget userId={_id} image={userPhoto} />
                 </Box>
                 <Box
                     flexBasis={isNonMobileScreens ? "42%" : undefined}
@@ -37,9 +37,8 @@ const HomePage = () => {
                         <Typography color={palette.dark} variant="h3" fontWeight="500">
                             Recent Posts
                         </Typography>
-
                     </Box>
-                    {/* <PostsWidget userId={_id} /> */}
+                    <PostsWidget userId={_id} />
                 </Box>
                 {isNonMobileScreens && (
                     <Box flexBasis="26%">

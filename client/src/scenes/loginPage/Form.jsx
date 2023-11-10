@@ -40,7 +40,7 @@ const initialValuesLogin = {
 
 
 const Form = () => {
-    const [pageType, setPageType] = useState("register")
+    const [pageType, setPageType] = useState("login")
     const [uploadURL, setUploadURL] = useState(null)
     const { palette } = useTheme();
     const dispatch = useDispatch();

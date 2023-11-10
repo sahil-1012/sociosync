@@ -30,9 +30,6 @@ app.listen(PORT, () => {
     console.log("Listening on: http://localhost:" + PORT);
 });
 
-// app.use("/", (req, res) => {
-//     res.send("Welcome to sociopedia Server");
-// });
 
 
 /* // ~ ROUTES WITH FILES */
@@ -71,6 +68,7 @@ app.listen(PORT, () => {
 //     });
 // });
 
+app.use("/", startRoutes)
 app.use("/posts", postRoutes)
 app.use("/users", userRoutes)
 app.use("/auth", authRoutes)
