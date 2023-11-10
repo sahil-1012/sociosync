@@ -11,6 +11,8 @@ const HomePage = () => {
     const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
     const { _id, picturePath } = useSelector((state) => state.user);
     const { palette } = useTheme();
+    const userPhoto = useSelector((state) => state.userPhoto);
+
 
     return (
         <Box>
@@ -29,7 +31,7 @@ const HomePage = () => {
                     flexBasis={isNonMobileScreens ? "42%" : undefined}
                     mt={isNonMobileScreens ? undefined : "2rem"}
                 >
-                    <MyPostWidget picturePath={picturePath} />
+                    <MyPostWidget />
 
                     <Box ml='2px' mt='2rem'>
                         <Typography color={palette.dark} variant="h3" fontWeight="500">
@@ -37,7 +39,7 @@ const HomePage = () => {
                         </Typography>
 
                     </Box>
-                    <PostsWidget userId={_id} />
+                    {/* <PostsWidget userId={_id} /> */}
                 </Box>
                 {isNonMobileScreens && (
                     <Box flexBasis="26%">

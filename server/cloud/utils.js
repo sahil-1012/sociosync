@@ -25,7 +25,7 @@ async function getFile(key) {
         Bucket: bucketName,
         Key: fileName,
     }, params);
-    const url = await getSignedUrl(b2, command);
+    const url = await getSignedUrl(b2, command, { expiresIn: 1800 });
     return url;
 }
 
