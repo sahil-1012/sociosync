@@ -11,6 +11,7 @@ const getUser = async (req, res) => {
         res.status(400).json({ message: err.message })
     }
 }
+
 const uploadProfilePhoto = async (req, res) => {
     try {
         const { id } = req.params;

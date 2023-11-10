@@ -21,9 +21,11 @@ import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
 import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
+
+const PORT = process.env.REACT_APP_HOST;
 
 const MyPostWidget = () => {
   const dispatch = useDispatch();
@@ -38,25 +40,73 @@ const MyPostWidget = () => {
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
 
-  const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    formData.append("description", post);
-    if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
-    }
 
-    const response = await fetch(`http://localhost:3001/posts/`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
+  const [photoElements, setPhotoElements] = useState({});
+  const getPostPhotoUrl = async () => {
+
+    const response = await fetch(`${PORT}/posts/addPost/photo`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
     });
 
-    const posts = await response.json();
-    dispatch(setPosts({ posts }));
-    setImage(null);
-    setPost("");
+    const resp = await response.json();
+    console.log(resp);
+    setPhotoElements(resp);
+  }
+
+  useEffect(() => {
+    if (photoElements.url === null || photoElements.url === undefined) {
+      getPostPhotoUrl()
+    }
+
+  }, [])
+
+  const handlePost = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('file', image);
+
+      const response = await fetch('https://cors-anywhere.herokuapp.com/' + photoElements.url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'PUT',
+        body: formData,
+      });
+      console.log("object");
+      if (response.ok) {
+        console.log('Image uploaded successfully!');
+
+        const data = {
+          'userId': _id,
+          'description': post,
+          'picturePath': photoElements.unique
+        }
+        console.log(data);
+
+        const response = await fetch(`${PORT}/posts/addPost`, {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(data),
+        });
+
+        const resp = await response.json();
+        console.log(resp);
+        if (resp.success) {
+          dispatch(setPosts({ posts: resp.posts }));
+          setImage(null);
+          setPost("");
+        }
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (

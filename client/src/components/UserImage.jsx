@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box } from '@mui/material';
 
-const PORT = process.env.REACT_APP_HOST;
-
 const UserImage = ({ image, size = '60px' }) => {
-
     return (
         <Box width={size} height={size}>
             <img

@@ -20,7 +20,6 @@ const UploadPhoto = ({ uploadURL }) => {
                 });
 
                 if (response.ok) {
-                    // Handle successful upload, e.g., show a success message
                     console.log('Image uploaded successfully!');
                 } else {
                     // Handle upload failure, e.g., show an error message

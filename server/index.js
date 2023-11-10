@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const configDotenv = require("dotenv");
 
+const startRoutes = require("./routes/startRoutes.js");
 const authRoutes = require("./routes/auth.js");
 const userRoutes = require("./routes/users.js");
 const postRoutes = require("./routes/posts.js");
@@ -13,7 +14,6 @@ const dbConnection = require("./connections/dbConnect");
 configDotenv.config();
 
 const app = express();
-app.use(cors())
 app.use(express.json())
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,6 +22,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(cors())
 // MONGOOSE SETUP
 const PORT = process.env.PORT || 4001
 dbConnection();
@@ -68,9 +69,8 @@ app.listen(PORT, () => {
 //     });
 // });
 
-app.use("/", startRoutes)
+// app.use("/", startRoutes)
 app.use("/posts", postRoutes)
 app.use("/users", userRoutes)
 app.use("/auth", authRoutes)
 app.use("/comment", commentRoutes)
-// app.post("/posts", verifyToken, createPost)

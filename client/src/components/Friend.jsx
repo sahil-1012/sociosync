@@ -35,7 +35,6 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     dispatch(setFriends({ friends: data }));
   };
 
-  console.log('Friend Id ' + friendId)
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">

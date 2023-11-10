@@ -1,26 +1,37 @@
 const Post = require('../models/post.js');
 const User = require('../models/users.js');
-
+const { uploadFile } = require("../cloud/utils.js");
+const { v4: uuidv4 } = require('uuid');
 // CREATE
-const createPost = async (req, res, next) => {
+const createPost = async (req, res) => {
     try {
         const { userId, description, picturePath } = req.body;
-        const user = await User.findById(userId).select('-picture')
-        console.log(userId, description, picturePath)
+        const user = await User.findById(userId)
         const newPost = new Post({
-            userId, description, picturePath,
             firstName: user.firstName, lastName: user.lastName,
-            location: user.location, userPicturePath: user.picturePath,
-            likes: {},
+            userId, description, picturePath,
+            location: user.location, likes: {},
         })
 
         await newPost.save();
 
-
         const posts = await Post.find().sort({ createdAt: -1 });
         // const post = await Post.find()
-        res.status(201).json(posts)
+        res.status(201).json({ posts, success: true })
 
+    } catch (err) {
+        console.log(err.message)
+        return res.status(409).json({ message: err.message });
+    }
+}
+const createPhotoUrl = async (req, res) => {
+    try {
+        const contentType = 'image/jpeg'
+        const unique = uuidv4()
+        const key = `posts/${unique}`;
+        key
+        const url = await uploadFile(key, contentType);
+        res.status(201).json({ url, unique, success: true })
 
     } catch (err) {
         console.log(err.message)
@@ -39,10 +50,12 @@ const getFeedPosts = async (req, res) => {
             // Map over the comments for the current post and add the username to each comment
             const formattedComments = await Promise.all(post.comments.map(async (comment) => {
                 const user = await User.findById(comment.userId).select('-picture');
-                return {
-                    ...comment.toObject(),
-                    username: user.firstName + ' ' + user.lastName,
-                };
+                if (user) {
+                    return {
+                        ...comment.toObject(),
+                        username: user.firstName + ' ' + user.lastName,
+                    };
+                }
             }));
 
             formattedComments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -140,4 +153,4 @@ const likePost = async (req, res, next) => {
 }
 
 
-module.exports = { createPost, getFeedPosts, getUserPosts, likePost };
+module.exports = { createPost, createPhotoUrl, getFeedPosts, getUserPosts, likePost };
