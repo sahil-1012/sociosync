@@ -4,7 +4,7 @@ import FlexBetween from 'components/FlexBetween';
 import React, { useEffect, useState } from 'react';
 import Dropzone from 'react-dropzone';
 
-const UploadPhoto = ({ handleSkip }) => {
+const UploadPhoto = ({ handleSkip, uploadURL }) => {
 
     // const uploadURL = 'https://sociopedia.s3.us-east-005.backblazeb2.com/654e15dea2cfb26b86e561a6.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=0052c4efc5df2780000000004%2F20231110%2Fus-east-005%2Fs3%2Faws4_request&X-Amz-Date=20231110T113702Z&X-Amz-Expires=900&X-Amz-Signature=217ee4593bc0076754ea0b5a05f698dbe3365bed03414d48d727d12d22b3be6c&X-Amz-SignedHeaders=host&x-id=PutObject'
     const { palette } = useTheme();
@@ -19,13 +19,14 @@ const UploadPhoto = ({ handleSkip }) => {
     // }, [uploadURL])
 
     const handleConfirmUpload = async () => {
-        if (selectedPhoto) {
+        if (selectedPhoto && uploadURL) {
             try {
+
                 const formData = new FormData();
                 formData.append('file', selectedPhoto);
                 console.log("formData")
 
-                const response = await fetch('https://cors-anywhere.herokuapp.com/https://sociopedia.s3.us-east-005.backblazeb2.com/img.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=0052c4efc5df2780000000004%2F20231110%2Fus-east-005%2Fs3%2Faws4_request&X-Amz-Date=20231110T152159Z&X-Amz-Expires=900&X-Amz-Signature=dfbd5c5f4b407a37db68641adf08d808dfc581f5815aacd92b4f6c5ee322a6c8&X-Amz-SignedHeaders=host&x-id=PutObject', {
+                const response = await fetch('https://cors-anywhere.herokuapp.com/' + uploadURL, {
                     headers: {
                         'Content-Type': 'application/json',
                         // Add other headers as needed
