@@ -1,12 +1,12 @@
 import { EditOutlined } from '@mui/icons-material';
 import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material';
 import FlexBetween from 'components/FlexBetween';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 
-const UploadPhoto = ({ handleSkip }) => {
+const UploadPhoto = ({ handleSkip, uploadURL }) => {
+    console.log(uploadURL);
 
-    const uploadURL = 'https://sociopedia.s3.us-east-005.backblazeb2.com/image.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=0052c4efc5df2780000000004%2F20231110%2Fus-east-005%2Fs3%2Faws4_request&X-Amz-Date=20231110T162755Z&X-Amz-Expires=900&X-Amz-Signature=90051ce913a4ad597f6163159e0fbc030322fa9b23989c49ec252200aafbea7e&X-Amz-SignedHeaders=host&x-id=PutObject'
     const { palette } = useTheme();
     const [selectedPhoto, setSelectedPhoto] = useState(null);
     const isNonMobile = useMediaQuery("(min-width:600px)")
@@ -40,6 +40,7 @@ const UploadPhoto = ({ handleSkip }) => {
                 console.log(response)
                 if (response.ok) {
                     console.log('Image uploaded successfully!');
+                    handleSkip();
                 } else {
                     console.error('Image upload failed:', response.statusText);
                 }

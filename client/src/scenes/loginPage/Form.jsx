@@ -40,7 +40,7 @@ const initialValuesLogin = {
 
 
 const Form = () => {
-    const [pageType, setPageType] = useState("uploadPhoto")
+    const [pageType, setPageType] = useState("register")
     const [uploadURL, setUploadURL] = useState(null)
     const { palette } = useTheme();
     const dispatch = useDispatch();
@@ -53,8 +53,7 @@ const Form = () => {
     const isUploadPhoto = pageType === "uploadPhoto"
 
     const login = async (values, onSubmitProps) => {
-        const loggedInResponse = await fetch(
-            `${PORT}/auth/login`,
+        const loggedInResponse = await fetch(`${PORT}/auth/login`,
             {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -62,13 +61,16 @@ const Form = () => {
             }
         );
         const loggedIn = await loggedInResponse.json();
+        console.log(loggedIn);
         if (loggedIn.success) {
             onSubmitProps.resetForm();
             dispatch(
                 setLogin({
                     user: loggedIn.user,
+                    userPhoto: loggedIn.userPhoto,
                     token: loggedIn.token,
                 })
+
             )
             navigate('/home')
         }
@@ -86,12 +88,11 @@ const Form = () => {
             });
 
             const savedUser = await savedUserResponse.json();
-            console.log(savedUser)
             if (savedUser.success) {
+                setUploadURL(savedUser.url);
                 setPageType('uploadPhoto');
-                setUploadURL(savedUser.uploadURL);
-                // setPageType('login');
                 onSubmitProps.resetForm();
+                // setPageType('login');
             } else {
                 // ****** ~ Server error popup
             }
@@ -101,7 +102,6 @@ const Form = () => {
     }
 
     const handleFormSubmit = async (values, onSubmitProps) => {
-        console.log("first")
         if (isLogin) {
             await login(values, onSubmitProps)
         }
@@ -123,14 +123,15 @@ const Form = () => {
             {isUploadPhoto ?
                 <UploadPhoto uploadURL={uploadURL} handleSkip={handleSkip} />
                 :
-                <Formik onSubmit={handleFormSubmit}
+                <Formik
+                    onSubmit={handleFormSubmit}
                     initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
                     validationSchema={isLogin ? loginSchema : registerSchema}>
                     {/* // ~ TYPICAL SYNTAX OF FORMIK */}
                     {({
                         values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm
                     }) => (
-                        <form 
+                        <form
                         // onSubmit={handleSubmit}
                         >
                             <Box display="grid" gap='30px' gridTemplateColumns='repeat(4, minmax(0, 1fr))'
@@ -208,8 +209,7 @@ const Form = () => {
                             <Box>
                                 <Button
                                     fullWidth
-                                    onClick={handleSubmit}
-                                    // type='submit'
+                                    onClick={async () => await handleSubmit()}
                                     sx={{
                                         m: '2rem 0',
                                         p: '1rem',

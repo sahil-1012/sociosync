@@ -33,9 +33,12 @@ const MyPostWidget = () => {
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
+  const userPhoto = useSelector((state) => state.userPhoto);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
+
+
 
   const handlePost = async () => {
     const formData = new FormData();
@@ -61,7 +64,7 @@ const MyPostWidget = () => {
   return (
     <WidgetWrapper>
       <FlexBetween gap="1.5rem">
-        <UserImage userId={_id} />
+        <UserImage image={userPhoto} />
         <InputBase
           placeholder="What's on your mind..."
           onChange={(e) => setPost(e.target.value)}
