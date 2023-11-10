@@ -42,6 +42,20 @@ app.listen(PORT, () => {
 });
 
 
+// app.use("/assets", express.static(path.join(__dirname, 'public/assets')))
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, "public/assets")
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, file.originalname);
+//     }
+// })
+
+
+
+
+
 // app.use("/", (req, res) => {
 //     res.send("Welcome to sociopedia Server");
 // });
@@ -50,10 +64,11 @@ app.use("/auth", authRoutes)
 app.use("/users", userRoutes)
 
 /* // ~ ROUTES WITH FILES */
+// app.post("/auth/register",  register)
 
-// app.use(express.json({ limit: '10mb' })); // Set the limit as needed
-app.use(express.json()); 
+app.use(express.json({ limit: '10mb' })); // Set the limit as needed
 
+app.post('/auth/register', register);
 
 app.get('/users/image/:userId', async (req, res) => {
     try {
@@ -75,6 +90,7 @@ app.get('/users/image/:userId', async (req, res) => {
     }
 });
 
+
 app.get('/files/:filename', (req, res) => {
     gfs.photos.findOne({ filename: req.params.filename }, (err, file) => {
         // Check if file
@@ -89,6 +105,7 @@ app.get('/files/:filename', (req, res) => {
         return res.json(file);
     });
 });
+
 
 app.post("/posts", verifyToken, createPost)
 app.use("/users", userRoutes)

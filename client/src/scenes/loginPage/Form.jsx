@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
 import { Formik } from 'formik'
 import * as yup from 'yup'
-import Dropzone from 'react-dropzone'
-import FlexBetween from 'components/FlexBetween'
 import { Box, Button, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { EditOutlined } from '@mui/icons-material'
 import { setLogin } from 'state'
+import UploadPhoto from './uploadPhoto'
 
 const PORT = process.env.REACT_APP_HOST;
 
@@ -19,7 +17,6 @@ const registerSchema = yup.object().shape({
     password: yup.string().required("required"),
     location: yup.string().required("required"),
     occupation: yup.string().required("required"),
-    picture: yup.string().required("required"),
 })
 
 const loginSchema = yup.object().shape({
@@ -34,7 +31,6 @@ const initialValuesRegister = {
     password: '',
     location: '',
     occupation: '',
-    picture: '',
 };
 
 const initialValuesLogin = {
@@ -44,7 +40,8 @@ const initialValuesLogin = {
 
 
 const Form = () => {
-    const [pageType, setPageType] = useState("login")
+    const [pageType, setPageType] = useState("uploadPhoto")
+    const [uploadURL, setUploadURL] = useState(null)
     const { palette } = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -53,6 +50,7 @@ const Form = () => {
 
     const isLogin = pageType === "login"
     const isRegister = pageType === "register"
+    const isUploadPhoto = pageType === "uploadPhoto"
 
     const login = async (values, onSubmitProps) => {
         const loggedInResponse = await fetch(
@@ -77,50 +75,22 @@ const Form = () => {
     }
 
     const register = async (values, onSubmitProps) => {
-        const file = values.picture;
-
-
-
-
-        
-        
-        
-        const binaryPicture = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            
-            reader.onload = (event) => {
-                const base64Data = event.target.result.split(',')[1]; // Remove the "data:image/..." part
-                resolve(base64Data);
-            };
-            
-            // reader.onload = (event) => {
-            //     const uint8Array = new Uint8Array(event.target.result);
-            //     resolve(uint8Array);
-            // };
-            
-            // reader.readAsArrayBuffer(file);
-            reader.readAsDataURL(file);
-        });
-        
-        // const blob = new Blob([binaryPicture], { type: "text/plain" });
-        // console.log(blob); // Check the format of binaryPicture
-        const data = {
-            ...values,
-            pic: binaryPicture,
-        };
-
         try {
+            console.log('register', values)
             const savedUserResponse = await fetch(`${PORT}/auth/register`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', // Specify the Content-Type header
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(values),
             });
 
             const savedUser = await savedUserResponse.json();
+            console.log(savedUser)
             if (savedUser.success) {
-                setPageType('login');
+                setPageType('uploadPhoto');
+                setUploadURL(savedUser.uploadURL);
+                // setPageType('login');
                 onSubmitProps.resetForm();
             } else {
                 // ****** ~ Server error popup
@@ -128,174 +98,153 @@ const Form = () => {
         } catch (error) {
             console.error('Error:', error);
         }
-
     }
 
-
-
-
-
     const handleFormSubmit = async (values, onSubmitProps) => {
-
+        console.log("first")
         if (isLogin) {
             await login(values, onSubmitProps)
         }
+
         else if (isRegister) {
+            console.log("first")
             await register(values, onSubmitProps)
         }
     };
 
+    const handleSkip = () => {
+        setPageType("Login")
+    }
+
 
 
     return (
-        <Formik onSubmit={handleFormSubmit}
-            initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
-            validationSchema={isLogin ? loginSchema : registerSchema}>
-            {/* // ~ TYPICAL SYNTAX OF FORMIK */}
-            {({
-                values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm
-            }) => (
-                <form onSubmit={handleSubmit}>
-                    <Box display="grid" gap='30px' gridTemplateColumns='repeat(4, minmax(0, 1fr))'
-                        sx={{
-                            // ~ APPLYING MEDIAQUERY TO MAKE SPAN FULL
-                            // ~ divs AFTER THIS IS SELECTED BY & > div 
-                            '& > div': { gridColumn: isNonMobile ? undefined : 'span 4' }
-                        }}>
+        <>
+            {isUploadPhoto ?
+                <UploadPhoto uploadURL={uploadURL} handleSkip={handleSkip} />
+                :
+                <Formik onSubmit={handleFormSubmit}
+                    initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
+                    validationSchema={isLogin ? loginSchema : registerSchema}>
+                    {/* // ~ TYPICAL SYNTAX OF FORMIK */}
+                    {({
+                        values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue, resetForm
+                    }) => (
+                        <form 
+                        // onSubmit={handleSubmit}
+                        >
+                            <Box display="grid" gap='30px' gridTemplateColumns='repeat(4, minmax(0, 1fr))'
+                                sx={{
+                                    // ~ APPLYING MEDIAQUERY TO MAKE SPAN FULL
+                                    // ~ divs AFTER THIS IS SELECTED BY & > div 
+                                    '& > div': { gridColumn: isNonMobile ? undefined : 'span 4' }
+                                }}>
 
-                        {isRegister && (
-                            <>
-                                <TextField label='First Name'
-                                    name='firstName'
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    value={values.firstName}
-                                    error={Boolean(touched.firstName) && Boolean(errors.firstName)}
-                                    helperText={touched.firstName && errors.firstName}
-                                    sx={{ gridColumn: 'span 2' }}
-                                />
-                                <TextField label='Last Name'
-                                    name='lastName'
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    value={values.lastName}
-                                    error={Boolean(touched.lastName) && Boolean(errors.lastName)}
-                                    helperText={touched.lastName && errors.lastName}
-                                    sx={{ gridColumn: 'span 2' }}
-                                />
-                                <TextField label='Location'
-                                    name='location'
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    value={values.location}
-                                    error={Boolean(touched.location) && Boolean(errors.location)}
-                                    helperText={touched.location && errors.location}
+                                {isRegister && (
+                                    <>
+                                        <TextField label='First Name'
+                                            name='firstName'
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.firstName}
+                                            error={Boolean(touched.firstName) && Boolean(errors.firstName)}
+                                            helperText={touched.firstName && errors.firstName}
+                                            sx={{ gridColumn: 'span 2' }}
+                                        />
+                                        <TextField label='Last Name'
+                                            name='lastName'
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.lastName}
+                                            error={Boolean(touched.lastName) && Boolean(errors.lastName)}
+                                            helperText={touched.lastName && errors.lastName}
+                                            sx={{ gridColumn: 'span 2' }}
+                                        />
+                                        <TextField label='Location'
+                                            name='location'
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.location}
+                                            error={Boolean(touched.location) && Boolean(errors.location)}
+                                            helperText={touched.location && errors.location}
+                                            sx={{ gridColumn: 'span 4' }}
+                                        />
+                                        <TextField label='Occupation'
+                                            name='occupation'
+                                            onBlur={handleBlur}
+                                            onChange={handleChange}
+                                            value={values.occupation}
+                                            error={Boolean(touched.occupation) && Boolean(errors.occupation)}
+                                            helperText={touched.occupation && errors.occupation}
+                                            sx={{ gridColumn: 'span 4' }}
+                                        />
+
+                                    </>
+                                )}
+                                <TextField
                                     sx={{ gridColumn: 'span 4' }}
-                                />
-                                <TextField label='Occupation'
-                                    name='occupation'
+                                    label='Email id'
+                                    name='email'
+                                    value={values.email}
                                     onBlur={handleBlur}
                                     onChange={handleChange}
-                                    value={values.occupation}
-                                    error={Boolean(touched.occupation) && Boolean(errors.occupation)}
-                                    helperText={touched.occupation && errors.occupation}
-                                    sx={{ gridColumn: 'span 4' }}
+                                    error={Boolean(touched.email) && Boolean(errors.email)}
+                                    helperText={touched.email && errors.email}
                                 />
-                                <Box
-                                    gridColumn='span 4'
-                                    border={`1px solid ${palette.neutral.medium}`}
-                                    borderRadius='5px'
-                                    p='1rem'
+
+                                <TextField
+                                    sx={{ gridColumn: 'span 4' }}
+                                    label='Password'
+                                    name='password'
+                                    type='password'
+                                    value={values.password}
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
+                                    error={Boolean(touched.password) && Boolean(errors.password)}
+                                    helperText={touched.password && errors.password}
+                                />
+                            </Box>
+
+                            <Box>
+                                <Button
+                                    fullWidth
+                                    onClick={handleSubmit}
+                                    // type='submit'
+                                    sx={{
+                                        m: '2rem 0',
+                                        p: '1rem',
+                                        backgroundColor: palette.primary.main,
+                                        color: palette.background.alt,
+                                        '&:hover': { color: palette.primary.main }
+                                    }}
                                 >
-                                    <Dropzone
-                                        acceptedFiles='.jpg,.jpeg,.png'
-                                        multiple={false}
-                                        onDrop={(acceptedFiles) =>
-                                            setFieldValue('picture', acceptedFiles[0])}
-                                    >
-                                        {({ getRootProps, getInputProps }) => (
-                                            <Box
-                                                {...getRootProps()}
-                                                border={`2px dashed ${palette.primary.main}`}
-                                                p='1rem'
-                                                sx={{
-                                                    '&:hover': { cursor: 'pointer' }
-                                                }}
-                                            >
-                                                <input {...getInputProps()} />
-                                                {!values.picture ? (
-                                                    <p>Add Picture Here</p>
-                                                ) : (
-                                                    <FlexBetween>
-                                                        <Typography>{values.picture.name}</Typography>
-                                                        <EditOutlined />
-                                                    </FlexBetween>
-                                                )}
-                                            </Box>
-                                        )}
-                                    </Dropzone>
-                                </Box>
-                            </>
-                        )}
-                        <TextField
-                            sx={{ gridColumn: 'span 4' }}
-                            label='Email id'
-                            name='email'
-                            value={values.email}
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            error={Boolean(touched.email) && Boolean(errors.email)}
-                            helperText={touched.email && errors.email}
-                        />
+                                    {isLogin ? 'LOGIN' : 'REGISTER'}
+                                </Button>
 
-                        <TextField
-                            sx={{ gridColumn: 'span 4' }}
-                            label='Password'
-                            name='password'
-                            type='password'
-                            value={values.password}
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            error={Boolean(touched.password) && Boolean(errors.password)}
-                            helperText={touched.password && errors.password}
-                        />
-                    </Box>
+                                <Typography
+                                    onClick={() => {
+                                        setPageType(isLogin ? 'register' : 'login')
+                                        resetForm()
+                                    }}
+                                    sx={{
+                                        textDecoration: 'underline',
+                                        color: palette.primary.main,
+                                        '&:hover': {
+                                            cursor: 'pointer',
+                                            color: palette.primary.light,
+                                        }
+                                    }}
+                                >
+                                    {isLogin ? "Don't have an account? Sign up here." : "Already have an account? Login here."}
+                                </Typography>
+                            </Box>
+                        </form>
+                    )}
+                </Formik>
 
-                    <Box>
-                        <Button
-                            fullWidth
-                            type='submit'
-                            sx={{
-                                m: '2rem 0',
-                                p: '1rem',
-                                backgroundColor: palette.primary.main,
-                                color: palette.background.alt,
-                                '&:hover': { color: palette.primary.main }
-                            }}
-                        >
-                            {isLogin ? 'LOGIN' : 'REGISTER'}
-                        </Button>
+            }
+        </>
 
-                        <Typography
-                            onClick={() => {
-                                setPageType(isLogin ? 'register' : 'login')
-                                resetForm()
-                            }}
-                            sx={{
-                                textDecoration: 'underline',
-                                color: palette.primary.main,
-                                '&:hover': {
-                                    cursor: 'pointer',
-                                    color: palette.primary.light,
-                                }
-                            }}
-                        >
-                            {isLogin ? "Don't have an account? Sign up here." : "Already have an account? Login here."}
-                        </Typography>
-                    </Box>
-                </form>
-            )}
-        </Formik>
     )
 }
 

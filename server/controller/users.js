@@ -1,3 +1,4 @@
+const { uploadFile } = require('../cloud/utils.js');
 const User = require('../models/users.js');
 
 const getUser = async (req, res) => {
@@ -5,6 +6,17 @@ const getUser = async (req, res) => {
         const { id } = req.params;
         const user = await User.findById(id).select('-picture');
         res.status(200).json(user);
+
+    } catch (err) {
+        res.status(400).json({ message: err.message })
+    }
+}
+const uploadProfilePhoto = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const contentType = 'image/jpeg'
+        const url = await uploadFile(id, contentType)
+        res.status(200).json({ url });
 
     } catch (err) {
         res.status(400).json({ message: err.message })
@@ -98,4 +110,4 @@ const addRemoveFriends = async (req, res) => {
     }
 }
 
-module.exports = { getUser, updateName, getUserFriends, addRemoveFriends };
+module.exports = { getUser, uploadProfilePhoto, updateName, getUserFriends, addRemoveFriends };
