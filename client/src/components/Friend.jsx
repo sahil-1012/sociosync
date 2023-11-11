@@ -16,7 +16,7 @@ const Friend = ({ friendId, name, subtitle, image }) => {
   const friends = useSelector((state) => state.user.friends);
 
   const { palette } = useTheme();
-  const primaryLight = palette.primary.light;
+  const buttonLight = palette.primary.buttonLight;
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
@@ -65,7 +65,7 @@ const Friend = ({ friendId, name, subtitle, image }) => {
       {_id !== friendId &&
         <IconButton
           onClick={() => patchFriend()}
-          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+          sx={{ backgroundColor: buttonLight, p: "0.6rem" }}
         >
           {isFriend ? (
             <PersonRemoveOutlined sx={{ color: primaryDark }} />

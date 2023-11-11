@@ -24,6 +24,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
+import ButtonProgress from "components/ButtonProgress";
 
 const PORT = process.env.REACT_APP_HOST;
 
@@ -35,11 +36,11 @@ const MyPostWidget = () => {
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const userPhoto = useSelector((state) => state.userPhoto);
+  const userPhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/${_id}.jpeg`;
+
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
-
 
   const [photoElements, setPhotoElements] = useState({});
   const getPostPhotoUrl = async () => {
@@ -63,8 +64,17 @@ const MyPostWidget = () => {
     }
   }, [])
 
+  const [loading, setLoading] = useState(false);
+  const stopLoading = () => {
+    setLoading(false)
+  }
+  const startLoading = () => {
+    setLoading(true)
+  }
+
   const handlePost = async () => {
     try {
+      startLoading();
       const response = await fetch(photoElements.url, {
         headers: {
           'Content-Type': 'image/jpeg',
@@ -94,6 +104,7 @@ const MyPostWidget = () => {
         const resp = await response.json();
         console.log(resp);
         if (resp.success) {
+          stopLoading();
           dispatch(setPosts({ posts: resp.posts }));
           setImage(null);
           setPost("");
@@ -112,6 +123,7 @@ const MyPostWidget = () => {
           placeholder="What's on your mind..."
           onChange={(e) => setPost(e.target.value)}
           value={post}
+          
           sx={{
             width: "100%",
             backgroundColor: palette.neutral.light,
@@ -202,17 +214,22 @@ const MyPostWidget = () => {
           </FlexBetween>
         )}
 
-        <Button
-          disabled={!post}
-          onClick={handlePost}
+        {/* <Button
           sx={{
             color: palette.background.alt,
             backgroundColor: palette.primary.main,
             borderRadius: "3rem",
           }}
-        >
+          >
           POST
-        </Button>
+        </Button> */}
+        <ButtonProgress
+          handleClick={handlePost}
+          loading={loading}
+          stopLoading={stopLoading}
+          startLoading={startLoading}
+          disabled={!post}
+        />
       </FlexBetween>
     </WidgetWrapper>
   );

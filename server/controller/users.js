@@ -51,8 +51,14 @@ const updateName = async (req, res) => {
         const { firstName, lastName } = req.body;
         console.log(id, firstName, lastName)
         const user = await User.findByIdAndUpdate(id, { firstName, lastName }, { new: true }).select('-picture');
+        const photo = `https://sociopedia.s3.us-east-005.backblazeb2.com/${user._id}.jpeg`;
 
-        return res.status(200).json(user);
+        const formattedUser = {
+            ...user.toObject(),
+            photo,
+        };
+
+        return res.status(200).json({ user: formattedUser, success: true });
 
     } catch (err) {
         res.status(400).json({ message: err.message })

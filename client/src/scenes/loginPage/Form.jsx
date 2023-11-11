@@ -107,13 +107,12 @@ const Form = () => {
         }
 
         else if (isRegister) {
-            console.log("first")
             await register(values, onSubmitProps)
         }
     };
 
     const handleSkip = () => {
-        setPageType("Login")
+        setPageType("login")
     }
 
 

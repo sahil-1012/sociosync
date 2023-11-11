@@ -12,7 +12,6 @@ const { useNavigate } = require("react-router-dom");
 const PORT = process.env.REACT_APP_HOST;
 
 const UserWidget = ({ userId }) => {
-  const dispatch = useDispatch();
   const currentUserId = useSelector((state) => state.user._id);
 
   const [modal, setModal] = useState(false);
@@ -44,16 +43,18 @@ const UserWidget = ({ userId }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (user?.firstName === null || user?.firstName === undefined) {
+      if (user?.firstName === null || user?.firstName === undefined || user._id !== userId) {
         await getUser();
       }
     };
+
     fetchData();
 
-    if (user.newName && newName === null) {
+    if (user.firstName && newName === null) {
       setNewName(user.firstName + " " + user.lastName);
     }
-  }, [user]);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  }, [user, userId]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {
     return null;
@@ -64,7 +65,7 @@ const UserWidget = ({ userId }) => {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' '); // The rest as the last name
 
-    const response = await fetch(`${PORT}/users/${userId}/updateName`, {
+    const response = await fetch(`${PORT}/users/updateName/${userId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -73,10 +74,12 @@ const UserWidget = ({ userId }) => {
       body: JSON.stringify({ firstName, lastName }),
     });
 
-    const updatedUser = await response.json();
-    dispatch(setCurrentUser({ user: updatedUser }));
-    closeModal();
-    getUser();
+    const resp = await response.json();
+    if (resp.success) {
+      // dispatch(setCurrentUser({ user: updatedUser }));
+      closeModal();
+      getUser();
+    }
   }
 
   const {

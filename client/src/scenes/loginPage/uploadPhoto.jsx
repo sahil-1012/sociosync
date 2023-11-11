@@ -19,25 +19,18 @@ const UploadPhoto = ({ handleSkip, uploadURL }) => {
     // }, [uploadURL])
 
     const handleConfirmUpload = async () => {
-        console.log(uploadURL)
         if (selectedPhoto && uploadURL) {
             try {
-
-                const formData = new FormData();
-                formData.append('file', selectedPhoto);
-                console.log("formData")
-
-                const response = await fetch( uploadURL, {
+                const response = await fetch(uploadURL, {
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'image/jpeg',
                         // Add other headers as needed
                     },
                     method: 'PUT',
-                    body: formData,
+                    body: selectedPhoto,
 
                 });
 
-                console.log(response)
                 if (response.ok) {
                     console.log('Image uploaded successfully!');
                     handleSkip();
@@ -47,6 +40,9 @@ const UploadPhoto = ({ handleSkip, uploadURL }) => {
             } catch (error) {
                 console.error('Error during image upload:', error.message);
             }
+        } else {
+            console.info("Uploading Url expired!");
+            handleSkip();
         }
     };
 
