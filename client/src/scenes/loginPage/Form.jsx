@@ -8,7 +8,7 @@ import { setLogin } from 'state'
 import UploadPhoto from './uploadPhoto'
 import ButtonProgress from 'components/ButtonProgress'
 
-const PORT = process.env.REACT_APP_HOST;
+const HOST = process.env.REACT_APP_HOST;
 
 // ***** YUP VALIDATION SCHEMA
 const registerSchema = yup.object().shape({
@@ -56,7 +56,7 @@ const Form = () => {
 
     const login = async (values, onSubmitProps) => {
         setLoading(true);
-        const loggedInResponse = await fetch(`${PORT}/auth/login`,
+        const loggedInResponse = await fetch(`${HOST}/auth/login`,
             {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -78,18 +78,18 @@ const Form = () => {
         }
         setLoading(false);
     }
-    
+
     const register = async (values, onSubmitProps) => {
         try {
             setLoading(true);
-            const savedUserResponse = await fetch(`${PORT}/auth/register`, {
+            const savedUserResponse = await fetch(`${HOST}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(values),
             });
-            
+
             const savedUser = await savedUserResponse.json();
             if (savedUser.success) {
                 setUploadURL(savedUser.url);
@@ -104,7 +104,7 @@ const Form = () => {
             console.error('Error:', error);
         }
     }
-    
+
     const handleFormSubmit = async (values, onSubmitProps) => {
         if (isLogin) {
             await login(values, onSubmitProps)

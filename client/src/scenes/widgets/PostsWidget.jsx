@@ -4,7 +4,7 @@ import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 import { Box, Typography, useTheme } from "@mui/material";
 
-const PORT = process.env.REACT_APP_HOST;
+const HOST = process.env.REACT_APP_HOST;
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const { palette } = useTheme();
@@ -15,7 +15,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const token = useSelector((state) => state.token);
 
   const getPosts = async () => {
-    const response = await fetch(`${PORT}/posts`, {
+    const response = await fetch(`${HOST}/posts`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -26,7 +26,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   const getUserPosts = async () => {
     const response = await fetch(
-      `${PORT}/posts/${userId}/posts`,
+      `${HOST}/posts/${userId}/posts`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },

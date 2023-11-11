@@ -6,7 +6,7 @@ import { setFriends } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 
-const PORT = process.env.REACT_APP_HOST;
+const HOST = process.env.REACT_APP_HOST;
 
 const Friend = ({ friendId, name, subtitle, image }) => {
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const Friend = ({ friendId, name, subtitle, image }) => {
   const isFriend = friends?.length > 0 && friends?.find((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
-    const response = await fetch(`${PORT}/users/${_id}/${friendId}`, {
+    const response = await fetch(`${HOST}/users/${_id}/${friendId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,

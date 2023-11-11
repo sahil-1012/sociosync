@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 
 
-const PORT = process.env.REACT_APP_HOST;
+const HOST = process.env.REACT_APP_HOST;
 
 
 const PostWidget = ({ postId,
@@ -46,7 +46,7 @@ const PostWidget = ({ postId,
   const medium = palette.neutral.medium;
 
   const patchLike = async () => {
-    const response = await fetch(`${PORT}/posts/${postId}/like`, {
+    const response = await fetch(`${HOST}/posts/${postId}/like`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ const PostWidget = ({ postId,
   };
 
   const submitComment = async () => {
-    const response = await fetch(`${PORT}/comment/addComment`, {
+    const response = await fetch(`${HOST}/comment/addComment`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,

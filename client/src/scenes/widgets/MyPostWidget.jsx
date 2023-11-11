@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import ButtonProgress from "components/ButtonProgress";
 
-const PORT = process.env.REACT_APP_HOST;
+const HOST = process.env.REACT_APP_HOST;
 
 const MyPostWidget = () => {
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ const MyPostWidget = () => {
   const [photoElements, setPhotoElements] = useState({});
   const getPostPhotoUrl = async () => {
 
-    const response = await fetch(`${PORT}/posts/addPost/photo`, {
+    const response = await fetch(`${HOST}/posts/addPost/photo`, {
       method: "GET",
       headers: {
         'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const MyPostWidget = () => {
         }
         console.log(data);
 
-        const response = await fetch(`${PORT}/posts/addPost`, {
+        const response = await fetch(`${HOST}/posts/addPost`, {
           method: "POST",
           headers: {
             'Content-Type': 'application/json',
@@ -123,7 +123,7 @@ const MyPostWidget = () => {
           placeholder="What's on your mind..."
           onChange={(e) => setPost(e.target.value)}
           value={post}
-          
+
           sx={{
             width: "100%",
             backgroundColor: palette.neutral.light,

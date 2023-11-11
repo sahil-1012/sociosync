@@ -9,7 +9,7 @@ const { useEffect, useState } = require("react");
 const { useSelector, useDispatch } = require("react-redux");
 const { useNavigate } = require("react-router-dom");
 
-const PORT = process.env.REACT_APP_HOST;
+const HOST = process.env.REACT_APP_HOST;
 
 const UserWidget = ({ userId }) => {
   const currentUserId = useSelector((state) => state.user._id);
@@ -31,7 +31,7 @@ const UserWidget = ({ userId }) => {
       event.preventDefault();
     }
 
-    const response = await fetch(`${PORT}/users/${userId}`, {
+    const response = await fetch(`${HOST}/users/${userId}`, {
       method: 'GET',
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -65,7 +65,7 @@ const UserWidget = ({ userId }) => {
     const firstName = nameParts[0];
     const lastName = nameParts.slice(1).join(' '); // The rest as the last name
 
-    const response = await fetch(`${PORT}/users/updateName/${userId}`, {
+    const response = await fetch(`${HOST}/users/updateName/${userId}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,

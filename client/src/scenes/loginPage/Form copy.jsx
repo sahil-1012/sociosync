@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setLogin } from 'state'
 
-const PORT = process.env.REACT_APP_HOST;
+const HOST = process.env.REACT_APP_HOST;
 
 // ***** YUP VALIDATION SCHEMA
 const registerSchema = yup.object().shape({
@@ -53,7 +53,7 @@ const Form = () => {
 
     const login = async (values, onSubmitProps) => {
         const loggedInResponse = await fetch(
-            `${PORT}/auth/login`,
+            `${HOST}/auth/login`,
             {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -76,15 +76,15 @@ const Form = () => {
     const register = async (values, onSubmitProps) => {
         const file = values.picture;
 
-        
+
         const binaryPicture = await new Promise((resolve, reject) => {
             const reader = new FileReader();
-            
+
             reader.onload = (event) => {
                 const base64Data = event.target.result.split(',')[1]; // Remove the "data:image/..." part
                 resolve(base64Data);
             };
-            
+
             reader.readAsDataURL(file);
         });
         const data = {
@@ -93,7 +93,7 @@ const Form = () => {
         };
 
         try {
-            const savedUserResponse = await fetch(`${PORT}/auth/register`, {
+            const savedUserResponse = await fetch(`${HOST}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', // Specify the Content-Type header
@@ -184,7 +184,7 @@ const Form = () => {
                                     helperText={touched.occupation && errors.occupation}
                                     sx={{ gridColumn: 'span 4' }}
                                 />
-                               
+
                             </>
                         )}
                         <TextField
