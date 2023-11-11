@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriends } from "state";
 const HOST = process.env.REACT_APP_HOST;
+const CLOUD = process.env.REACT_APP_CLOUD;
 
 const FriendListWidget = ({ userId }) => {
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ const FriendListWidget = ({ userId }) => {
       </Typography>
       <Box display="flex" flexDirection="column" gap="1.5rem">
         {friends?.length > 0 && friends.map((friend) => {
-          const friendPhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/${friend._id}.jpeg`;
+          const friendPhoto = `${CLOUD}/${friend._id}.jpeg`;
           return (
             <Friend
               key={friend._id}

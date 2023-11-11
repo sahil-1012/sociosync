@@ -9,7 +9,6 @@ const register = async (req, res) => {
             picturePath, friends, location, occupation } = req.body;
 
 
-
         const salt = await bcrypt.genSalt();
         const passHash = await bcrypt.hash(password, salt);
 
@@ -20,7 +19,7 @@ const register = async (req, res) => {
         });
 
         const savedUser = await newUser.save();
-        let url = 'https://sociopedia.s3.us-east-005.backblazeb2.com/image.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=0052c4efc5df2780000000004%2F20231110%2Fus-east-005%2Fs3%2Faws4_request&X-Amz-Date=20231110T162755Z&X-Amz-Expires=900&X-Amz-Signature=90051ce913a4ad597f6163159e0fbc030322fa9b23989c49ec252200aafbea7e&X-Amz-SignedHeaders=host&x-id=PutObject';
+        let url;
         if (savedUser) {
             url = await uploadFile(savedUser._id)
         }

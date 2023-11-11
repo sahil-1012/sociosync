@@ -27,6 +27,7 @@ import { setPosts } from "state";
 import ButtonProgress from "components/ButtonProgress";
 
 const HOST = process.env.REACT_APP_HOST;
+const CLOUD = process.env.REACT_APP_CLOUD;
 
 const MyPostWidget = () => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const MyPostWidget = () => {
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const userPhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/${_id}.jpeg`;
+  const userPhoto = `${CLOUD}/${_id}.jpeg`;
 
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;

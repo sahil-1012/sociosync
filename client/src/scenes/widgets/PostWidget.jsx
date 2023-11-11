@@ -16,6 +16,7 @@ import { setPost } from "state";
 
 
 const HOST = process.env.REACT_APP_HOST;
+const CLOUD = process.env.REACT_APP_CLOUD;
 
 
 const PostWidget = ({ postId,
@@ -29,8 +30,8 @@ const PostWidget = ({ postId,
   comments,
 }) => {
 
-  const profilePhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/${postUserId}.jpeg`;
-  const postPhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/posts/${picturePath}.jpeg`;
+  const profilePhoto = `${CLOUD}/${postUserId}.jpeg`;
+  const postPhoto = `${CLOUD}/posts/${picturePath}.jpeg`;
 
   const [comment, setComment] = useState("");
   const [isComments, setIsComments] = useState(false);

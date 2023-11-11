@@ -1,11 +1,15 @@
 const { uploadFile, getFile } = require('../cloud/utils.js');
 const User = require('../models/users.js');
+const configDotenv = require("dotenv");
+configDotenv.config();
+
+const CLOUD = process.env.CLOUD;
 
 const getUser = async (req, res) => {
     try {
         const { id } = req.params;
         const user = await User.findById(id);
-        const photo = `https://sociopedia.s3.us-east-005.backblazeb2.com/${user._id}.jpeg`;
+        const photo = `${CLOUD}/${user._id}.jpeg`;
 
         const formattedUser = {
             ...user.toObject(),
@@ -46,12 +50,11 @@ const getProfilePhoto = async (req, res) => {
 
 const updateName = async (req, res) => {
     try {
-        console.log("first")
         const { id } = req.params;
         const { firstName, lastName } = req.body;
         console.log(id, firstName, lastName)
         const user = await User.findByIdAndUpdate(id, { firstName, lastName }, { new: true }).select('-picture');
-        const photo = `https://sociopedia.s3.us-east-005.backblazeb2.com/${user._id}.jpeg`;
+        const photo = `${CLOUD}/${user._id}.jpeg`;
 
         const formattedUser = {
             ...user.toObject(),
