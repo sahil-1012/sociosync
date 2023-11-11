@@ -11,6 +11,7 @@ const FriendListWidget = ({ userId }) => {
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
 
+
   const getFriends = async () => {
     const response = await fetch(`http://localhost:3001/users/${userId}/friends`, {
       method: "GET",
@@ -36,15 +37,19 @@ const FriendListWidget = ({ userId }) => {
         Friend List
       </Typography>
       <Box display="flex" flexDirection="column" gap="1.5rem">
-        {friends?.length > 0 && friends.map((friend) => (
-          <Friend
-            key={friend._id}
-            friendId={friend._id}
-            name={`${friend.firstName} ${friend.lastName}`}
-            subtitle={friend.occupation}
-            userPicturePath={friend.picturePath}
-          />
-        ))}
+        {friends?.length > 0 && friends.map((friend) => {
+          const friendPhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/${friend._id}.jpeg`;
+          return (
+            <Friend
+              key={friend._id}
+              friendId={friend._id}
+              name={`${friend.firstName} ${friend.lastName}`}
+              subtitle={friend.occupation}
+              image={friendPhoto}
+            />
+          );
+        })}
+
       </Box>
     </WidgetWrapper>
   );

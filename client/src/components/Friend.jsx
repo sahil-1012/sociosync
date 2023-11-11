@@ -8,7 +8,7 @@ import UserImage from "./UserImage";
 
 const PORT = process.env.REACT_APP_HOST;
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Friend = ({ friendId, name, subtitle, image }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
@@ -38,7 +38,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
-        <UserImage userId={friendId} size="55px" />
+        <UserImage image={image} size="55px" />
         <Box onClick={() => {
           navigate(`/profile/${friendId}`);
         }}
@@ -62,16 +62,18 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         </Box>
       </FlexBetween>
 
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        )}
-      </IconButton>
+      {_id !== friendId &&
+        <IconButton
+          onClick={() => patchFriend()}
+          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+        >
+          {isFriend ? (
+            <PersonRemoveOutlined sx={{ color: primaryDark }} />
+          ) : (
+            <PersonAddOutlined sx={{ color: primaryDark }} />
+          )}
+        </IconButton>
+      }
     </FlexBetween>
   );
 };

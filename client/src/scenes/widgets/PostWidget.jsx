@@ -12,7 +12,7 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {  setPost } from "state";
+import { setPost } from "state";
 
 
 const PORT = process.env.REACT_APP_HOST;
@@ -28,6 +28,9 @@ const PostWidget = ({ postId,
   likes,
   comments,
 }) => {
+
+  const profilePhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/${postUserId}.jpeg`;
+  const postPhoto = `https://sociopedia.s3.us-east-005.backblazeb2.com/posts/${picturePath}.jpeg`;
 
   const [comment, setComment] = useState("");
   const [isComments, setIsComments] = useState(false);
@@ -79,7 +82,7 @@ const PostWidget = ({ postId,
         friendId={postUserId}
         name={name}
         subtitle={location}
-        userPicturePath={userPicturePath}
+        image={profilePhoto}
       />
 
       <Typography color={main} sx={{ mt: "1rem" }}>
@@ -92,7 +95,7 @@ const PostWidget = ({ postId,
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`${PORT}/assets/${picturePath}`}
+          src={postPhoto}
         />
       )}
       <FlexBetween mt="0.25rem">
