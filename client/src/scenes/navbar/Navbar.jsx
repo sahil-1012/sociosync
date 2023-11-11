@@ -53,7 +53,7 @@ const Navbar = () => {
                     }}
 
                 >
-                    SocialSync
+                    SocioSync
                 </Typography>
 
                 {isNonMobileScreens && (

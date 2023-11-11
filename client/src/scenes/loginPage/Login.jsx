@@ -14,7 +14,7 @@ const LoginPage = () => {
                     fontSize="32px"
                     color="primary"
                 >
-                    SocialSync
+                    SocioSync
                 </Typography>
             </Box>
 
@@ -26,7 +26,7 @@ const LoginPage = () => {
             >
 
                 <Typography fontWeight='500' variant='h5' sx={{ mb: '1.5rem' }}>
-                    Welcome to SocialSync, the Social Media for SocioPaths !
+                    Welcome to SocioSync, the Social Media for SocioPaths !
                 </Typography>
                 <Form />
 
