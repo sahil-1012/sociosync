@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { setLogin } from 'state'
 import UploadPhoto from './uploadPhoto'
+import ButtonProgress from 'components/ButtonProgress'
 
 const PORT = process.env.REACT_APP_HOST;
 
@@ -42,6 +43,7 @@ const initialValuesLogin = {
 const Form = () => {
     const [pageType, setPageType] = useState("login")
     const [uploadURL, setUploadURL] = useState(null)
+    const [loading, setLoading] = useState(false)
     const { palette } = useTheme();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -53,6 +55,7 @@ const Form = () => {
     const isUploadPhoto = pageType === "uploadPhoto"
 
     const login = async (values, onSubmitProps) => {
+        setLoading(true);
         const loggedInResponse = await fetch(`${PORT}/auth/login`,
             {
                 method: "POST",
@@ -61,7 +64,6 @@ const Form = () => {
             }
         );
         const loggedIn = await loggedInResponse.json();
-        console.log(loggedIn);
         if (loggedIn.success) {
             onSubmitProps.resetForm();
             dispatch(
@@ -74,11 +76,12 @@ const Form = () => {
             )
             navigate('/home')
         }
+        setLoading(false);
     }
-
+    
     const register = async (values, onSubmitProps) => {
         try {
-            console.log('register', values)
+            setLoading(true);
             const savedUserResponse = await fetch(`${PORT}/auth/register`, {
                 method: 'POST',
                 headers: {
@@ -86,7 +89,7 @@ const Form = () => {
                 },
                 body: JSON.stringify(values),
             });
-
+            
             const savedUser = await savedUserResponse.json();
             if (savedUser.success) {
                 setUploadURL(savedUser.url);
@@ -96,11 +99,12 @@ const Form = () => {
             } else {
                 // ****** ~ Server error popup
             }
+            setLoading(false);
         } catch (error) {
             console.error('Error:', error);
         }
     }
-
+    
     const handleFormSubmit = async (values, onSubmitProps) => {
         if (isLogin) {
             await login(values, onSubmitProps)
@@ -206,20 +210,17 @@ const Form = () => {
                             </Box>
 
                             <Box>
-                                <Button
-                                    fullWidth
-                                    onClick={async () => await handleSubmit()}
-                                    sx={{
-                                        m: '2rem 0',
-                                        p: '1rem',
-                                        backgroundColor: palette.primary.main,
-                                        color: palette.background.alt,
-                                        '&:hover': { color: palette.primary.main }
-                                    }}
-                                >
-                                    {isLogin ? 'LOGIN' : 'REGISTER'}
-                                </Button>
 
+
+                                <Box sx={{ m: '2rem 0' }}>
+                                    <ButtonProgress
+                                        loading={loading}
+                                        large={true}
+                                        label={isLogin ? 'LOGIN' : 'REGISTER'}
+                                        handleClick={async () => await handleSubmit()}
+                                        fullWidth
+                                    />
+                                </Box>
                                 <Typography
                                     onClick={() => {
                                         setPageType(isLogin ? 'register' : 'login')
