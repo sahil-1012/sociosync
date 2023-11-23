@@ -46,8 +46,7 @@ Certainly! Here's an enhanced version:
    B2_REGION=YOUR_B2_REGION
    ```
 
-   "If you haven't set up an account on Backblaze B2 yet, you can [create one here](https://www.backblaze.com){:target='_blank'}."
-   "If you haven't set up an account on Backblaze B2 yet, you can create one [here](https://www.backblaze.com){:target='_blank'}."
+   "If you haven't set up an account on Backblaze B2 yet, you can [create one here](https://www.backblaze.com){:target='_blank' rel="noopener"}."
 
 
 
