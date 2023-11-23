@@ -94,9 +94,6 @@ Contributions to Sociopedia are welcome! Feel free to open issues or pull reques
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-```
-This README provides a clearer structure and more detailed comments to guide users during the setup process.
-```
 
 ## Different Views
 ![Pic3](assets/pic3.png)
