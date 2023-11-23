@@ -1,14 +1,19 @@
-const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const { S3Client } = require('@aws-sdk/client-s3');
+const configDotenv = require("dotenv");
+configDotenv.config();
 
+const ENDPOINT = process.env.B2_ENDPOINT
+const ACCESS_KEY_ID = process.env.B2_ACCESS_KEY_ID
+const SECRET_ACCESS_KEY = process.env.B2_SECRET_ACCESS_KEY
+const REGION = process.env.B2_REGION
 
 
 const b2 = new S3Client({
-    endpoint: 'https://s3.us-east-005.backblazeb2.com',
-    region: 'us-east-005',
+    endpoint: ENDPOINT,
+    region: REGION,
     credentials: {
-        accessKeyId: '0052c4efc5df2780000000004',
-        secretAccessKey: 'K005MUdJONxXGp2d0Vel2hr0TAe1z38'
+        accessKeyId: ACCESS_KEY_ID,
+        secretAccessKey: SECRET_ACCESS_KEY
     }
 });
 
