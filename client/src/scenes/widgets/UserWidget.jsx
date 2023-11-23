@@ -6,7 +6,7 @@ const { default: FlexBetween } = require("components/FlexBetween");
 const { default: UserImage } = require("components/UserImage");
 const { default: WidgetWrapper } = require("components/WidgetWrapper");
 const { useEffect, useState } = require("react");
-const { useSelector, useDispatch } = require("react-redux");
+const { useSelector } = require("react-redux");
 const { useNavigate } = require("react-router-dom");
 
 const HOST = process.env.REACT_APP_HOST;
