@@ -3,7 +3,6 @@
 # dependencies
 /server/node_modules
 /client/node_modules
-/server/vercel.json
 
 /.pnp
 .pnp.js
