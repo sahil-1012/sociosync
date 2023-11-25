@@ -43,7 +43,6 @@ const login = async (req, res) => {
         }
         const isMatch = await bcrypt.compare(password, user.password);
 
-        console.log("object");
         if (!isMatch) {
             return res.status(400).json({ msg: "Invalid User Credentials" })
         }
@@ -52,7 +51,6 @@ const login = async (req, res) => {
 
         let url;
         url = await getFile(user._id);
-        console.log(user);
         return res.status(200).json({ token, user, userPhoto: url, success: true })
     } catch (err) {
         console.log(err.message)
