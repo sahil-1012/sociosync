@@ -50,7 +50,7 @@ Certainly! Here's an enhanced version:
 
 ---
 
-**Note:** If you encounter CORS issues during deployment, ensure that the CORS policy is set up using the BlackBlaze CLI. Use the following command:
+**Note:** If you encounter CORS issues during deployment, ensure that the CORS policy is set up using the BlackBlaze CLI. Use the following command (for windows only):
 
 ```bash
 b2-windows.exe update-bucket --corsRules "[{\"corsRuleName\":\"downloadFromAnyOrigin\", \"allowedOrigins\": [\"https\"], \"allowedHeaders\": [\"range\"], \"allowedOperations\": [\"b2_download_file_by_id\", \"b2_download_file_by_name\", \"s3_delete\", \"s3_get\", \"s3_head\", \"s3_post\", \"s3_put\"], \"exposeHeaders\": [\"x-bz-content-sha1\"], \"maxAgeSeconds\": 3600}]" bucketName allPublic
